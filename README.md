@@ -1,1 +1,1 @@
-# Northrop-Grumman-Computing-Cluster
+# Northrop Grumman Computing Cluster
