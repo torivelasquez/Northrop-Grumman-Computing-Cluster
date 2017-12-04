@@ -60,6 +60,7 @@ import torchvision
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import numpy as np
+import testing 
 ########################################################################
 # The output of torchvision datasets are PILImage images of range [0, 1].
 # We transform them to Tensors of normalized range [-1, 1]
@@ -144,10 +145,10 @@ net = Net()
 
 import torch.optim as optim
 
-#criterion = nn.CrossEntropyLoss() # distance from ground truth
+criterion = nn.CrossEntropyLoss() # distance from ground truth
 #criterion = nn.MSELoss() # distance from ground truth |x-y|^2
-criterion = nn.NLLLoss() # distance from ground truth
-optimizer = optim.Adam(net.parameters(), lr=0.001)#, momentum=0.9) # Stochastic Gradient Decent r= learning rate(speed of conversion) 
+#criterion = nn.NLLLoss() # distance from ground truth
+optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9) # Stochastic Gradient Decent r= learning rate(speed of conversion) 
 #momentum(weight of previous)
 
 ########################################################################
@@ -158,7 +159,7 @@ optimizer = optim.Adam(net.parameters(), lr=0.001)#, momentum=0.9) # Stochastic 
 # We simply have to loop over our data iterator, and feed the inputs to the
 # network and optimize
 
-for epoch in range(2):  # loop over the dataset multiple times
+for epoch in range(1):  # loop over the dataset multiple times
 
     running_loss = 0.0
     for i,data in enumerate(trainloader):
@@ -227,17 +228,7 @@ print('Predicted: ', ' '.join('%5s' % classes[predicted[j]]
 #
 # Let us look at how the network performs on the whole dataset.
 
-correct = 0
-total = 0
-for data in testloader:
-    images, labels = data
-    outputs = net(Variable(images))
-    _, predicted = torch.max(outputs.data, 1)
-    total += labels.size(0)
-    correct += (predicted == labels).sum()
-
-print('Accuracy of the network on the 10000 test images: %d %%' % (
-    100 * correct / total))
+testing.getaccuracy(testloader,net,images)
 
 ########################################################################
 # That looks waaay better than chance, which is 10% accuracy (randomly picking
@@ -246,23 +237,7 @@ print('Accuracy of the network on the 10000 test images: %d %%' % (
 #
 # Hmmm, what are the classes that performed well, and the classes that did
 # not perform well:
-
-class_correct = list(0. for i in range(10))
-class_total = list(0. for i in range(10))
-for data in testloader:
-    images, labels = data
-    outputs = net(Variable(images))
-    _, predicted = torch.max(outputs.data, 1)
-    c = (predicted == labels).squeeze()
-    for i in range(4):
-        label = labels[i]
-        class_correct[label] += c[i]
-        class_total[label] += 1
-
-
-for i in range(10):
-    print('Accuracy of %5s : %2d %%' % (
-        classes[i], 100 * class_correct[i] / class_total[i]))
+testing.getaccuracybyclass(testloader,net,images,classes)
 
 ########################################################################
 # Okay, so what next?

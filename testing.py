@@ -1,10 +1,13 @@
 import torch
 import torchvision
+import torch
+import torchvision
 import torchvision.transforms as transforms
+from torch.autograd import Variable
 import matplotlib.pyplot as plt
 import numpy as np
 
-def getaccuracy(testloader):
+def getaccuracy(testloader,net,images):
 	correct = 0
 	total = 0
 	for data in testloader:
@@ -22,7 +25,7 @@ def getaccuracy(testloader):
 #
 # Hmmm, what are the classes that performed well, and the classes that did
 # not perform well:
-def getaccuracybyclass(testloader):
+def getaccuracybyclass(testloader,net,images,classes):
 	class_correct = list(0. for i in range(10))
 	class_total = list(0. for i in range(10))
 	for data in testloader:
