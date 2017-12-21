@@ -7,7 +7,7 @@ classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
-def train(net,trainloader):
+def train(net,trainloader, optimizer, criterion):
     for epoch in range(1):  # loop over the dataset multiple times
 
         running_loss = 0.0
@@ -34,7 +34,7 @@ def train(net,trainloader):
                 print('[%d, %5d] loss: %.3f' %
                       (epoch + 1, i + 1, running_loss / 2000))
                 running_loss = 0.0
-	print('Finished Training')
+    print('Finished Training')
 
 if __name__ == "__main__":
 	transform = data.transformation()
@@ -44,7 +44,4 @@ if __name__ == "__main__":
 	dataiter = iter(data.traindata(transform))
 	images, labels = dataiter.next()
 	#print(transform)
-	train(net,data.traindata(transform))
-	getaccuracy(data.testdata(transform),net,images)
-	getaccuracybyclass(data.testdata(transform),net,images,classes)
-
+	train(net,data.traindata(transform), optimizer, criterion)
