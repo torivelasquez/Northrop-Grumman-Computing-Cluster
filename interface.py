@@ -6,6 +6,7 @@ from train import train
 
 while True:
     cmd = input(">>>")
+    #print(cmd)
     if cmd == "quit":
         break
     elif cmd == "train":
@@ -20,3 +21,13 @@ while True:
     elif cmd == "test":
         getaccuracy(data.testdata(transform), net, images)
         getaccuracybyclass(data.testdata(transform), net, images, data.classes())
+    elif cmd == "save":
+		torch.save(net.state_dict(),"classifier.pt")
+		print("saving....")
+    elif cmd == "load":
+		net.load_state_dict(torch.load("classifier.pt"))
+		print("loading....")
+    elif cmd == "help":
+		print("<train> to train model, <test> to test model")
+    else:
+		print("incorrect input please give correct input, <help> for help")
