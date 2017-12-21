@@ -3,6 +3,7 @@ import data as data
 from testing import getaccuracy
 from testing import getaccuracybyclass
 from train import train
+import sys
 
 while True:
     cmd = input(">>>")
@@ -19,15 +20,15 @@ while True:
         # print(transform)
         train(net, data.traindata(transform), optimizer, criterion)
     elif cmd == "test":
-        getaccuracy(data.testdata(transform), net, images)
-        getaccuracybyclass(data.testdata(transform), net, images, data.classes())
+         getaccuracy(data.testdata(transform), net, images)
+         getaccuracybyclass(data.testdata(transform), net, images, data.classes())
     elif cmd == "save":
-		torch.save(net.state_dict(),"classifier.pt")
-		print("saving....")
+	    torch.save(net.state_dict(),"classifier.pt")
+	    print("saving....")
     elif cmd == "load":
-		net.load_state_dict(torch.load("classifier.pt"))
-		print("loading....")
+	    net.load_state_dict(torch.load("classifier.pt"))
+	    print("loading....")
     elif cmd == "help":
-		print("<train> to train model, <test> to test model")
+	    print("<train> to train model, <test> to test model")
     else:
-		print("incorrect input please give correct input, <help> for help")
+	    print("incorrect input please give correct input, <help> for help")
