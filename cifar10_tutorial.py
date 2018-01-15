@@ -144,10 +144,10 @@ net = Net()
 
 import torch.optim as optim
 
-#criterion = nn.CrossEntropyLoss() # distance from ground truth
+criterion = nn.CrossEntropyLoss() # distance from ground truth
 #criterion = nn.MSELoss() # distance from ground truth |x-y|^2
-criterion = nn.NLLLoss() # distance from ground truth
-optimizer = optim.Adam(net.parameters(), lr=0.001)#, momentum=0.9) # Stochastic Gradient Decent r= learning rate(speed of conversion) 
+#criterion = nn.NLLLoss() # distance from ground truth
+optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9) # Stochastic Gradient Decent r= learning rate(speed of conversion) 
 #momentum(weight of previous)
 
 ########################################################################
@@ -158,7 +158,7 @@ optimizer = optim.Adam(net.parameters(), lr=0.001)#, momentum=0.9) # Stochastic 
 # We simply have to loop over our data iterator, and feed the inputs to the
 # network and optimize
 
-for epoch in range(2):  # loop over the dataset multiple times
+for epoch in range(1):  # loop over the dataset multiple times
 
     running_loss = 0.0
     for i,data in enumerate(trainloader):
