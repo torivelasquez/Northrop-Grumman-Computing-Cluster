@@ -1,6 +1,8 @@
 from torch.autograd import Variable
 import netDefine as netDefine
 import data as data
+import torchvision.models as models
+inception=models.inception_v3(pretrained=True)
 from testing import getaccuracy
 from testing import getaccuracybyclass
 classes = ('plane', 'car', 'bird', 'cat',
@@ -18,11 +20,13 @@ def train(net,trainloader, optimizer, criterion):
             #print(data,target)
             # wrap them in Variable
             inputs, target = Variable(inputs), Variable(target)
+            #print(inputs)
 
             # zero the parameter gradients
             optimizer.zero_grad()
 
             # forward + backward + optimize
+            #outputs = inception(inputs)
             outputs = net(inputs)
             loss = criterion(outputs, target)
             loss.backward()
@@ -30,9 +34,9 @@ def train(net,trainloader, optimizer, criterion):
 
             # print statistics
             running_loss += loss.data[0]
-            if i % 2000 == 1999:    # print every 2000 mini-batches
+            if i % 20 == 19:    # print every 2000 mini-batches
                 print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
+                      (epoch + 1, i + 1, running_loss / 20))
                 running_loss = 0.0
     print('Finished Training')
 
