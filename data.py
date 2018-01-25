@@ -1,16 +1,20 @@
 import torch
 import torchvision
 import torchvision.transforms as transforms
+import parser
+
 
 def transformation():
-	return transforms.Compose(
-	    [transforms.ToTensor(),
-	     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    return transforms.Compose(
+        [transforms.ToTensor(),
+         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 
-def traindata(transform):
-    trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-    return torch.utils.data.DataLoader(trainset, batch_size=4, shuffle=True, num_workers=2)
+def getData(transform):
+    csv_file = '/home/trocket/PycharmProjects/parser/cartrainingsetmini.csv'
+    root_dir = '/home/trocket/images/'
+    car_dataset = parser.CarDataset(csv_file, root_dir)
+    return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2)
 
 
 def testdata(transform):

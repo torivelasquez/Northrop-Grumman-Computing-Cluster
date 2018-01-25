@@ -15,13 +15,13 @@ while True:
         net = netDefine.Net()
         criterion = netDefine.loss()
         optimizer = netDefine.optimizer(net)
-        dataiter = iter(data.traindata(transform))
-        images, labels = dataiter.next()
+        #dataiter = iter(data.getData(transform))
+        #images, labels = dataiter.next()
         # print(transform)
-        train(net, data.traindata(transform), optimizer, criterion)
+        train(net, data.getData(transform), optimizer, criterion)
     elif cmd == "test":
-         getaccuracy(data.testdata(transform), net, images)
-         getaccuracybyclass(data.testdata(transform), net, images, data.classes())
+         getaccuracy(data.getData(transform), net, images)
+         getaccuracybyclass(data.getData(transform), net, images, data.classes())
     elif cmd == "save":
 	    torch.save(net,"classifier.pt")
     elif cmd == "load":
