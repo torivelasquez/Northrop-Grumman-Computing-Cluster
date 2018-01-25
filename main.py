@@ -14,7 +14,6 @@ if __name__ == "__main__":
 	optimizer = netDefine.optimizer(net)
 	dataiter = iter(data.traindata(transform))
 	images, labels = dataiter.next()
-	#print(transform)
 	train.train(net,data.traindata(transform))
 	getaccuracy(data.testdata(transform),net,images)
 	getaccuracybyclass(data.testdata(transform),net,images,classes)
