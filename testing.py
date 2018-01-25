@@ -1,11 +1,10 @@
+#file of testing metrics of the ConvNet Algorithms
+#functions:
+#	getaccuracy(): compares prediction to the actual label in test data set
+#	getaccuracybyclass(): compares prediction to the actual label for every class
+
 import torch
-import torchvision
-import torch
-import torchvision
-import torchvision.transforms as transforms
 from torch.autograd import Variable
-import matplotlib.pyplot as plt
-import numpy as np
 
 def getaccuracy(testloader,net,images):
 	correct = 0

@@ -1,3 +1,8 @@
+#data
+#transformation(): tranform of data into tensor with the pytorch example
+#transformation(): transform of the data to work with fine tuned alexnet (32 by 32 image size causes an error as the image size becomes {1,1,n} which breaks maxpooling)
+#
+
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -12,7 +17,7 @@ def transform2():
         [transforms.Resize((400,400)),
          transforms.ToTensor(),
          transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])])
-         #transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])])
+
 def traindata(transform):
     trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
     return torch.utils.data.DataLoader(trainset, batch_size=4, shuffle=True, num_workers=2)
