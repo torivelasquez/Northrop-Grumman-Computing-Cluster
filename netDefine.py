@@ -1,3 +1,10 @@
+# Convnet algorithms
+# contains:
+#   BaseNet: pytroch tutorials convnet
+#   Net : poor experiment of making a convnet
+#   TransferNet: takes an Alexnet base from the ImageNet contest and performs fine tunning for the specific problem
+#   optimizer(): performs stochastic gradient decent along the vector space of images
+#
 #   function descriptions:
 #       nn.conv2d performs
 #       nn. MaxPool(a,b) takes the maximum out of a*b segment of matrix
