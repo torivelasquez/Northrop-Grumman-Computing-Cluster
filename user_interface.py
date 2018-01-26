@@ -1,13 +1,12 @@
 import netDefine as netDefine
 import data as data
-from testing import getaccuracy
-from testing import getaccuracybyclass
+from testing import get_accuracy
+from testing import get_accuracy_by_class
 from train import train
 import torch
 
 while True:
     cmd = input(">>>")
-    #print(cmd)
     if cmd == "quit":
         break
     elif cmd == "train":
@@ -15,30 +14,23 @@ while True:
         net = netDefine.Net()
         criterion = netDefine.loss()
         optimizer = netDefine.optimizer(net)
-        #dataiter = iter(data.getData(transform))
-        #images, labels = dataiter.next()
-        # print(transform)
-        train(net, data.getData(transform), optimizer, criterion)
+        train(net, data.get_data(transform), optimizer, criterion)
     elif cmd == "test":
-         getaccuracy(data.getData(transform), net, images)
-         getaccuracybyclass(data.getData(transform), net, images, data.classes())
+        get_accuracy(data.get_data(transform), net, images)
+        get_accuracy_by_class(data.get_data(transform), net, images, data.classes())
     elif cmd == "save":
-	    torch.save(net,"classifier.pt")
+        torch.save(net,"classifier.pt")
     elif cmd == "load":
-        #transform = data.transformation()
-        #dataiter = iter(data.testdata(transform))
-        #images, labels = dataiter.next()
         net=torch.load("classifier.pt")
     elif cmd=="traini":
         transform = data.transform2()
         net = netDefine.TransferNet()
         criterion = netDefine.loss()
         optimizer = netDefine.optimizer(net)
-        dataiter = iter(data.traindata(transform))
+        dataiter = iter(data.get_data(transform))
         images, labels = dataiter.next()
-        # print(transform)
-        train(net, data.traindata(transform), optimizer, criterion)
+        train(net, data.get_data(transform), optimizer, criterion)
     elif cmd == "help":
-	    print("<train> to train model, <test> to test model")
+        print("<train> to train model, <test> to test model")
     else:
         print("incorrect input please give correct input, <help> for help")

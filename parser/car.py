@@ -1,4 +1,4 @@
-class car:
+class Car:
 
     def __init__(self, style, iname):
         self.style = style

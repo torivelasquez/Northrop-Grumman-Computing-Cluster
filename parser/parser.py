@@ -1,5 +1,4 @@
 import csv
-import car
 import os
 from skimage import io
 from torch.utils.data import Dataset

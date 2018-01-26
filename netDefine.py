@@ -19,6 +19,7 @@ import torch.optim as optim
 import torchvision.models as models
 initialmodel=models.alexnet(pretrained=True)
 
+
 class BaseNet(nn.Module):
     def __init__(self):
         super(BaseNet, self).__init__()
@@ -37,6 +38,7 @@ class BaseNet(nn.Module):
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+
 
 class TransferNet(nn.Module):
     def __init__(self):
@@ -83,10 +85,8 @@ class Net(nn.Module):
         return x
 
 
-
 def loss():
     return nn.CrossEntropyLoss()
-
 
 
 def optimizer(net):

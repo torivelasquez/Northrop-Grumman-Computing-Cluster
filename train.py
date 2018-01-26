@@ -1,21 +1,14 @@
 from torch.autograd import Variable
-import netDefine as netDefine
-import data as data
-from testing import getaccuracy
-from testing import getaccuracybyclass
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
-def train(net,trainloader, optimizer, criterion):
+def train(net, trainloader, optimizer, criterion):
     for epoch in range(1):  # loop over the dataset multiple times
 
         running_loss = 0.0
         for i,data in enumerate(trainloader):
-            # get the inputs
-            #print(data)
             inputs, target = data
-            #print(data,target)
             # wrap them in Variable
             inputs, target = Variable(inputs), Variable(target)
 
@@ -35,13 +28,3 @@ def train(net,trainloader, optimizer, criterion):
                       (epoch + 1, i + 1, running_loss / 2000))
                 running_loss = 0.0
     print('Finished Training')
-
-if __name__ == "__main__":
-	transform = data.transformation()
-	net = netDefine.Net()
-	criterion = netDefine.loss()
-	optimizer = netDefine.optimizer(net)
-	dataiter = iter(data.traindata(transform))
-	images, labels = dataiter.next()
-	#print(transform)
-	train(net,data.traindata(transform), optimizer, criterion)
