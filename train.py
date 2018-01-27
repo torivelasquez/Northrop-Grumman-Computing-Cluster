@@ -1,3 +1,7 @@
+# this file contains functions involved in training the neural net
+# functions:
+#   train(): trains the passed in neural net with the training data and functions passed in
+
 from torch.autograd import Variable
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')

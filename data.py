@@ -1,7 +1,9 @@
-#data
-#transformation(): tranform of data into tensor with the pytorch example
-#transform2(): transform of the data to work with fine tuned alexnet (32 by 32 image size causes an error as the image size becomes {1,1,n} which breaks maxpooling)
-#
+# data
+# functions:
+#   transformation(): tranform of data into tensor with the pytorch example
+#   transform2(): transform of the data to work with fine tuned alexnet (32 by 32 image size causes an error as the
+#   image size becomes {1,1,n} which breaks maxpooling)
+
 import torch
 import torchvision
 import torchvision.transforms as transforms

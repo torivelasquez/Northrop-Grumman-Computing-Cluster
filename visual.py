@@ -1,3 +1,8 @@
+# this file contains functions for the purpose of visualizing information to the user
+# functions:
+#   im_show(): displays an image
+
+
 import matplotlib.pyplot as plt
 import numpy as np
 

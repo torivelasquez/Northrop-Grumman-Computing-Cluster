@@ -1,7 +1,7 @@
-#file of testing metrics of the ConvNet Algorithms
-#functions:
-#	getaccuracy(): compares prediction to the actual label in test data set
-#	getaccuracybyclass(): compares prediction to the actual label for every class
+# file of testing metrics of the ConvNet Algorithms
+# functions:
+# 	getaccuracy(): compares prediction to the actual label in test data set
+# 	getaccuracybyclass(): compares prediction to the actual label for every class
 
 
 import torch

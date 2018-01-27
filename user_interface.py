@@ -1,3 +1,5 @@
+# this file contains the interface which serves as the driver for the rest of the software
+
 import netDefine as netDefine
 import data as data
 from testing import get_accuracy
