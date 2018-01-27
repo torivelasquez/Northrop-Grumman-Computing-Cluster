@@ -1,9 +1,8 @@
 # this file contains the interface which serves as the driver for the rest of the software
 
-import netDefine as netDefine
-import data as data
-from testing import get_accuracy
-from testing import get_accuracy_by_class
+import net_algorithms
+import data
+from testing import get_accuracy, get_accuracy_by_class
 from train import train
 import torch
 
@@ -13,9 +12,9 @@ while True:
         break
     elif cmd == "train":
         transform = data.transformation()
-        net = netDefine.Net()
-        criterion = netDefine.loss()
-        optimizer = netDefine.optimizer(net)
+        net = net_algorithms.Net()
+        criterion = net_algorithms.loss()
+        optimizer = net_algorithms.optimizer(net)
         train(net, data.get_data(transform), optimizer, criterion)
     elif cmd == "test":
         get_accuracy(data.get_data(transform), net, images)
@@ -26,9 +25,9 @@ while True:
         net=torch.load("classifier.pt")
     elif cmd=="traini":
         transform = data.transform2()
-        net = netDefine.TransferNet()
-        criterion = netDefine.loss()
-        optimizer = netDefine.optimizer(net)
+        net = net_algorithms.TransferNet()
+        criterion = net_algorithms.loss()
+        optimizer = net_algorithms.optimizer(net)
         dataiter = iter(data.get_data(transform))
         images, labels = dataiter.next()
         train(net, data.get_data(transform), optimizer, criterion)

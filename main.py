@@ -1,5 +1,5 @@
 from torch.autograd import Variable
-import netDefine as netDefine
+import net_algorithms as netDefine
 import data as data
 import train as train
 from testing import get_accuracy
