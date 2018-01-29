@@ -2,7 +2,7 @@ import csv
 import os
 from skimage import io
 from torch.utils.data import Dataset
-
+import parser.car as car
 
 # http://pytorch.org/tutorials/beginner/data_loading_tutorial.html
 class CarDataset(Dataset):
@@ -13,7 +13,7 @@ class CarDataset(Dataset):
             reader = csv.reader(csvfile, delimiter=',')
             i = 0
             for row in reader:
-                self.car_dict[i] = car.car(row[1], row[2])
+                self.car_dict[i] = car.Car(row[1], row[2])
                 i += 1
         self.root_dir = root_dir
         self.transform = transform

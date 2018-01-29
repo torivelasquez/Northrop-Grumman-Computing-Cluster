@@ -1,4 +1,8 @@
 # data
+# pathing to files
+# absolute path: path from home
+# relative path: path starting at the base file directory of northrop_Grumman_computing_cluster directory
+#
 # functions:
 #   transformation(): tranform of data into tensor with the pytorch example
 #   transform2(): transform of the data to work with fine tuned alexnet (32 by 32 image size causes an error as the
@@ -23,9 +27,13 @@ def transform2():
          transforms.Normalize(mean=[0.485, 0.456, 0.406],std=[0.229, 0.224, 0.225])])
 
 
-def get_data(transform):
-    csv_file = '/home/trocket/PycharmProjects/parser/cartrainingsetmini.csv'
-    root_dir = '/home/trocket/images/'
+def get_data(transform,pathtype='r'):
+    if(pathtype=='a'):
+        csv_file = '/home/trocket/PycharmProjects/parser/cartrainingsetmini.csv'
+        root_dir = '/home/trocket/images/'
+    else:
+        csv_file= 'parser/cartrainingsetmini.csv'
+        root_dir = 'images/'
     car_dataset = parser.CarDataset(csv_file, root_dir)
     return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2)
 
