@@ -1,2 +1,4 @@
 # ignore all idea directories
 .idea/
+images/
+__pycache__/

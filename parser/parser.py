@@ -2,6 +2,7 @@ import csv
 import os
 from skimage import io
 from torch.utils.data import Dataset
+from PIL import Image
 import parser.car as car
 
 # http://pytorch.org/tutorials/beginner/data_loading_tutorial.html
@@ -23,10 +24,12 @@ class CarDataset(Dataset):
 
     def __getitem__(self, index):
         img_name = os.path.join(self.root_dir, self.car_dict[index]["img_name"])
-        image = io.imread(img_name)
+        #image = io.imread(img_name)
+        image = Image.open(img_name)
         style = self.car_dict[index]["style"]
-        sample = {'image': image, 'style': style}
         if self.transform:
-            sample = self.transform(sample)
+            image = self.transform(image)
+        #sample = {'image': image, 'style': style}
+        sample = (image, style)
 
         return sample

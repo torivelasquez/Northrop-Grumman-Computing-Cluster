@@ -34,7 +34,7 @@ def get_data(transform,pathtype='r'):
     else:
         csv_file= 'parser/cartrainingsetmini.csv'
         root_dir = 'images/'
-    car_dataset = parser.CarDataset(csv_file, root_dir)
+    car_dataset = parser.CarDataset(csv_file, root_dir, transform2())
     return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2)
 
 
