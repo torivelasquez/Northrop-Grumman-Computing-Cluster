@@ -1,7 +1,8 @@
 # this file contains functions involved in training the neural net
 # functions:
 #   train(): trains the passed in neural net with the training data and functions passed in
-
+import torch
+import numpy as np
 from torch.autograd import Variable
 classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
@@ -11,8 +12,13 @@ def train(net, trainloader, optimizer, criterion):
     for epoch in range(1):  # loop over the dataset multiple times
 
         running_loss = 0.0
-        for i,data in enumerate(trainloader):
+        # print(trainloader,"output")
+        for i, data in enumerate(trainloader):
+            # print(data,"testing")
             inputs, target = data
+            print(target)
+            # target = torch.LongTensor(np.asarray(target, int))
+            # print(target)
             # wrap them in Variable
             inputs, target = Variable(inputs), Variable(target)
 
@@ -21,6 +27,7 @@ def train(net, trainloader, optimizer, criterion):
 
             # forward + backward + optimize
             outputs = net(inputs)
+            print(outputs)
             loss = criterion(outputs, target)
             loss.backward()
             optimizer.step()

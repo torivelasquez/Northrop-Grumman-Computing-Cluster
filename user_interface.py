@@ -12,7 +12,7 @@ while True:
     if cmd == "quit":
         break
     elif cmd == "train":
-        transform = data.transformation()
+        transform = data.transform2()
         net = net_algorithms.Net()
         criterion = net_algorithms.loss()
         optimizer = net_algorithms.optimizer(net)
