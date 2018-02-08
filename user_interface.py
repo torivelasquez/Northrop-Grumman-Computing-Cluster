@@ -2,7 +2,7 @@
 
 import net_algorithms
 import data
-from testing import get_accuracy, get_accuracy_by_class
+from testing import get_accuracy, get_accuracy_by_class, classify
 from train import train
 import torch
 
@@ -19,9 +19,15 @@ while True:
         optimizer = net_algorithms.optimizer(net)
         train(net, data_set, optimizer, criterion)
     elif cmd == "test":
+        transform = data.transform2()
         data_set, classes = data.get_data(transform, pathtype)
         get_accuracy(data_set, net)
         get_accuracy_by_class(data_set, net, classes)
+    elif cmd == "class":
+        transform = data.transform2()
+        data_set, classes = data.get_data(transform, pathtype)
+        cmd = input("file:")
+        classify(cmd, net, transform, classes)
     elif cmd == "save":
         torch.save(net, "classifier.pt")
     elif cmd == "load":

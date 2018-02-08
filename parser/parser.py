@@ -30,16 +30,12 @@ class CarDataset(Dataset):
 
     def __getitem__(self, index):
         img_name = os.path.join(self.root_dir, self.car_dict[index]["img_name"])
-        # image = io.imread(img_name)
         image = Image.open(img_name)
+        image = image.convert("RGB")
         style = self.car_dict[index]["style"]
-        # numstyle=index
-        # print(style)
         if self.transform:
             image = self.transform(image)
-        # sample = {'image': image, 'style': style}
         sample = (image, int(style)) # needed to covert '1' to 1
-        # print(sample)
         return sample
 
     def get_classes(self):

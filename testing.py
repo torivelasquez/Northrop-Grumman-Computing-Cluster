@@ -6,6 +6,16 @@
 
 import torch
 from torch.autograd import Variable
+from PIL import Image
+import os
+
+
+def classify(img_name, net, transform, classes):
+    image = Image.open(img_name)
+    image = transform(image).view((1, 3, 400, 400))
+    output = net(Variable(image))
+    _, c = torch.max(output.data, 1)
+    print(classes[c[0]])
 
 
 def get_accuracy(testloader, net):

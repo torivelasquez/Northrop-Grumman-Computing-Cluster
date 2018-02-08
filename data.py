@@ -29,10 +29,10 @@ def transform2():
 
 def get_data(transform, path_type='r'):
     if path_type == 'a':
-        csv_file = '/home/trocket/PycharmProjects/parser/cartrainingsetmini.csv'
+        csv_file = '/home/trocket/PycharmProjects/parser/cartrainingset.csv'
         root_dir = '/home/trocket/images/'
     else:
-        csv_file = 'parser/cartrainingsetmini.csv'
+        csv_file = 'parser/cartrainingset.csv'
         root_dir = 'images/'
     car_dataset = parser.CarDataset(csv_file, root_dir, transform)
     return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2), \
