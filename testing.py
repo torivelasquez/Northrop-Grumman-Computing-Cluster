@@ -8,7 +8,7 @@ import torch
 from torch.autograd import Variable
 
 
-def get_accuracy(testloader,net,images):
+def get_accuracy(testloader, net):
     correct = 0
     total = 0
     for data in testloader:
@@ -20,7 +20,7 @@ def get_accuracy(testloader,net,images):
     print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
 
 
-def get_accuracy_by_class(testloader, net, images, classes):
+def get_accuracy_by_class(testloader, net, classes):
     class_correct = list(0. for i in range(10))
     class_total = list(0. for i in range(10))
     for data in testloader:

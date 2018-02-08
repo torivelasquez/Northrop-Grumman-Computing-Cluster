@@ -17,7 +17,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torchvision.models as models
-initialmodel=models.alexnet(pretrained=True)
+initial_model = models.alexnet(pretrained=True)
 
 
 class BaseNet(nn.Module):
@@ -43,7 +43,7 @@ class BaseNet(nn.Module):
 class TransferNet(nn.Module):
     def __init__(self):
         super(TransferNet, self).__init__()
-        self.features = initialmodel.features
+        self.features = initial_model.features
         self.classifier = nn.Sequential(
             nn.Dropout(),
             nn.Linear(256 * 11 * 11, 2048),
@@ -55,9 +55,9 @@ class TransferNet(nn.Module):
         )
 
     def forward(self, x):
-        f=self.features(x)
-        f=f.view(f.size(0),256*11*11)
-        y=self.classifier(f)
+        f = self.features(x)
+        f = f.view(f.size(0),256*11*11)
+        y = self.classifier(f)
         return y
 
 
@@ -74,23 +74,14 @@ class Net(nn.Module):
         self.fc4 = nn.Linear(60, 10)
 
     def forward(self, x):
-        print(x.size())
         x = self.pool(F.leaky_relu(self.conv1(x)))
-        print(x.size())
         x = self.pool(F.leaky_relu(self.conv2(x)))
-        print(x.size())
         x = self.pool(F.leaky_relu(self.conv3(x)))
-        print(x.size())
         x = x.view([x.size()[0], -1])
-        print(x.size())
         x = F.leaky_relu(self.fc1(x))
-        print(x.size())
         x = F.leaky_relu(self.fc2(x))
-        print(x.size())
         x = F.leaky_relu(self.fc3(x))
-        print(x.size())
         x = self.fc4(x)
-        print(x.size())
         return x
 
 
@@ -104,6 +95,7 @@ class MinimalNet(nn.Module):
     def forward(self, x):
         x = x
         return x
+
 
 def loss():
     return nn.CrossEntropyLoss()

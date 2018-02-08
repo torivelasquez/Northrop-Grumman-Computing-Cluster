@@ -14,9 +14,7 @@ def train(net, trainloader, optimizer, criterion):
         running_loss = 0.0
         # print(trainloader,"output")
         for i, data in enumerate(trainloader):
-            # print(data,"testing")
             inputs, target = data
-            print(target)
             # target = torch.LongTensor(np.asarray(target, int))
             # print(target)
             # wrap them in Variable

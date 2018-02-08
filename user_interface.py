@@ -6,7 +6,7 @@ from testing import get_accuracy, get_accuracy_by_class
 from train import train
 import torch
 
-pathtype=''
+pathtype = ''
 while True:
     cmd = input(">>>")
     if cmd == "quit":
@@ -16,26 +16,26 @@ while True:
         net = net_algorithms.Net()
         criterion = net_algorithms.loss()
         optimizer = net_algorithms.optimizer(net)
-        train(net, data.get_data(transform,pathtype), optimizer, criterion)
+        train(net, data.get_data(transform, pathtype), optimizer, criterion)
     elif cmd == "test":
-        get_accuracy(data.get_data(transform), net, images)
-        get_accuracy_by_class(data.get_data(transform, pathtype), net, images, data.classes())
+        get_accuracy(data.get_data(transform, pathtype), net)
+        get_accuracy_by_class(data.get_data(transform, pathtype), net, data.classes())
     elif cmd == "save":
-        torch.save(net,"classifier.pt")
+        torch.save(net, "classifier.pt")
     elif cmd == "load":
-        net=torch.load("classifier.pt")
-    elif cmd=="traini":
+        net = torch.load("classifier.pt")
+    elif cmd == "traini":
         transform = data.transform2()
         net = net_algorithms.TransferNet()
         criterion = net_algorithms.loss()
         optimizer = net_algorithms.optimizer(net)
-        dataiter = iter(data.get_data(transform,pathtype))
+        dataiter = iter(data.get_data(transform, pathtype))
         images, labels = dataiter.next()
         train(net, data.get_data(transform), optimizer, criterion)
-    elif cmd=='pathtype':
-        inputpath=input('please input path type:')
-        if(inputpath=='r' or inputpath=='a'):
-            pathtype= inputpath
+    elif cmd == 'pathtype':
+        inputpath = input('please input path type:')
+        if inputpath == 'r' or inputpath == 'a':
+            pathtype = inputpath
         else:
             print("incorrect input for path")
     elif cmd == "help":
