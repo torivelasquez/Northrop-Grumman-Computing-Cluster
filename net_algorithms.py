@@ -62,7 +62,7 @@ class TransferNet(nn.Module):
 
 
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self, output_size):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
@@ -71,7 +71,7 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(82944, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 60)
-        self.fc4 = nn.Linear(60, 10)
+        self.fc4 = nn.Linear(60, output_size)
 
     def forward(self, x):
         x = self.pool(F.leaky_relu(self.conv1(x)))

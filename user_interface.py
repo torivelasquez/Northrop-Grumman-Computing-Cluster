@@ -13,10 +13,10 @@ while True:
         break
     elif cmd == "train":
         transform = data.transform2()
-        net = net_algorithms.Net()
+        data_set, classes = data.get_data(transform, pathtype)
+        net = net_algorithms.Net(len(classes))
         criterion = net_algorithms.loss()
         optimizer = net_algorithms.optimizer(net)
-        data_set, classes = data.get_data(transform, pathtype)
         train(net, data_set, optimizer, criterion)
     elif cmd == "test":
         data_set, classes = data.get_data(transform, pathtype)

@@ -29,7 +29,6 @@ def get_accuracy_by_class(testloader, net, classes):
         outputs = net(Variable(images))
         _, predicted = torch.max(outputs.data, 1)
         c = (predicted == labels).squeeze()
-        print(images, labels, predicted)
         for i in range(batch_size):
             label = labels[i]
             class_correct[label] += c[i]
