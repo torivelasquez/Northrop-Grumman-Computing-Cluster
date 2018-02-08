@@ -16,10 +16,12 @@ while True:
         net = net_algorithms.Net()
         criterion = net_algorithms.loss()
         optimizer = net_algorithms.optimizer(net)
-        train(net, data.get_data(transform, pathtype), optimizer, criterion)
+        data_set, classes = data.get_data(transform, pathtype)
+        train(net, data_set, optimizer, criterion)
     elif cmd == "test":
-        get_accuracy(data.get_data(transform, pathtype), net)
-        get_accuracy_by_class(data.get_data(transform, pathtype), net, data.classes())
+        data_set, classes = data.get_data(transform, pathtype)
+        get_accuracy(data_set, net)
+        get_accuracy_by_class(data_set, net, classes)
     elif cmd == "save":
         torch.save(net, "classifier.pt")
     elif cmd == "load":

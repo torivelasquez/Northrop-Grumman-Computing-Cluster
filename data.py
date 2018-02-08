@@ -35,9 +35,5 @@ def get_data(transform, path_type='r'):
         csv_file = 'parser/cartrainingsetmini.csv'
         root_dir = 'images/'
     car_dataset = parser.CarDataset(csv_file, root_dir, transform)
-    return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2)
-
-
-def classes():
-    return ('plane', 'car', 'bird', 'cat',
-            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+    return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2), \
+        car_dataset.get_classes()
