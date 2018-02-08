@@ -19,7 +19,7 @@ while True:
         train(net, data.get_data(transform,pathtype), optimizer, criterion)
     elif cmd == "test":
         get_accuracy(data.get_data(transform), net, images)
-        get_accuracy_by_class(data.get_data(transform,pathtype), net, images, data.classes())
+        get_accuracy_by_class(data.get_data(transform, pathtype), net, images, data.classes())
     elif cmd == "save":
         torch.save(net,"classifier.pt")
     elif cmd == "load":

@@ -68,22 +68,42 @@ class Net(nn.Module):
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.conv3 = nn.Conv2d(16, 36, 1)
-        self.fc1 = nn.Linear(36 * 2 * 2, 120)
+        self.fc1 = nn.Linear(82944, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 60)
         self.fc4 = nn.Linear(60, 10)
 
     def forward(self, x):
+        print(x.size())
         x = self.pool(F.leaky_relu(self.conv1(x)))
+        print(x.size())
         x = self.pool(F.leaky_relu(self.conv2(x)))
+        print(x.size())
         x = self.pool(F.leaky_relu(self.conv3(x)))
-        x = x.view(-1, 36 * 2 *2 )
+        print(x.size())
+        x = x.view([x.size()[0], -1])
+        print(x.size())
         x = F.leaky_relu(self.fc1(x))
+        print(x.size())
         x = F.leaky_relu(self.fc2(x))
+        print(x.size())
         x = F.leaky_relu(self.fc3(x))
+        print(x.size())
         x = self.fc4(x)
+        print(x.size())
         return x
 
+
+class MinimalNet(nn.Module):
+    def __init__(self):
+        super(MinimalNet, self).__init__()
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv = nn.Conv2d(3, 6, 5)
+        self.fc1 = nn.Linear(36 * 2 * 2, 120)
+
+    def forward(self, x):
+        x = x
+        return x
 
 def loss():
     return nn.CrossEntropyLoss()

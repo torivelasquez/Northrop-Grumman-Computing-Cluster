@@ -27,7 +27,6 @@ def train(net, trainloader, optimizer, criterion):
 
             # forward + backward + optimize
             outputs = net(inputs)
-            print(outputs)
             loss = criterion(outputs, target)
             loss.backward()
             optimizer.step()
