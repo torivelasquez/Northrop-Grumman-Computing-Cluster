@@ -2,7 +2,7 @@
 
 import net_algorithms
 import data
-from testing import get_accuracy, get_accuracy_by_class, classify
+from testing import get_accuracy, get_accuracy_by_class, classify,compute_confusion_matrix
 from train import train
 import torch
 
@@ -14,7 +14,7 @@ while True:
     elif cmd == "train":
         transform = data.transform2()
         data_set, classes = data.get_data(transform, pathtype)
-        net = net_algorithms.Net(len(classes))
+        net = net_algorithms.TransferNet(len(classes))
         criterion = net_algorithms.loss()
         optimizer = net_algorithms.optimizer(net)
         train(net, data_set, optimizer, criterion)
@@ -23,6 +23,7 @@ while True:
         data_set, classes = data.get_data(transform, pathtype)
         get_accuracy(data_set, net)
         get_accuracy_by_class(data_set, net, classes)
+        compute_confusion_matrix(data_set, net, classes)
     elif cmd == "class":
         transform = data.transform2()
         data_set, classes = data.get_data(transform, pathtype)
@@ -32,14 +33,6 @@ while True:
         torch.save(net, "classifier.pt")
     elif cmd == "load":
         net = torch.load("classifier.pt")
-    elif cmd == "traini":
-        transform = data.transform2()
-        net = net_algorithms.TransferNet()
-        criterion = net_algorithms.loss()
-        optimizer = net_algorithms.optimizer(net)
-        dataiter = iter(data.get_data(transform, pathtype))
-        images, labels = dataiter.next()
-        train(net, data.get_data(transform), optimizer, criterion)
     elif cmd == 'pathtype':
         inputpath = input('please input path type:')
         if inputpath == 'r' or inputpath == 'a':
@@ -47,6 +40,6 @@ while True:
         else:
             print("incorrect input for path")
     elif cmd == "help":
-        print("<train> to train model, <test> to test model")
+        print(" <train> to train model\n <test> to test model\n <save> saves net\n <load> loads net\n <class> take image and classify it with the net")
     else:
         print("incorrect input please give correct input, <help> for help")

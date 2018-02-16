@@ -7,7 +7,8 @@
 import torch
 from torch.autograd import Variable
 from PIL import Image
-import os
+import matplotlib.pyplot as plt
+import numpy as np
 
 
 def classify(img_name, net, transform, classes):
@@ -20,14 +21,20 @@ def classify(img_name, net, transform, classes):
 
 def get_accuracy(testloader, net):
     correct = 0
+    incorrect=0
     total = 0
+    TP=0
+    TN=0
+    FP=0
+    FN=0
     for data in testloader:
         images, labels = data
         outputs = net(Variable(images))
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum()
-    print('Accuracy of the network on the 10000 test images: %d %%' % (100 * correct / total))
+        incorrect += (predicted != labels).sum()
+    print('Accuracy of the network on the test images: %d %%' % (100 * correct / total))
 
 
 def get_accuracy_by_class(testloader, net, classes):
@@ -46,4 +53,17 @@ def get_accuracy_by_class(testloader, net, classes):
     for i in range(len(classes)):
         print('Accuracy of %5s : %2d %%' % (
         classes[i], 100 * class_correct[i] / class_total[i]))
+
+
+def compute_confusion_matrix(testloader,net,classes):
+    confusionmatrix = np.zeros((len(classes), len(classes)),dtype=int)
+    print(confusionmatrix)
+    for data in testloader:
+        images, labels = data
+        batch_size = images.size()[0]
+        outputs = net(Variable(images))
+        _, predicted = torch.max(outputs.data, 1)
+        for i in range(batch_size):
+            confusionmatrix[labels[i]][predicted[i]]+=1
+    print(confusionmatrix,confusionmatrix.sum())
 
