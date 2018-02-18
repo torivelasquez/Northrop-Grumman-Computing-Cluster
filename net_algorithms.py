@@ -41,7 +41,7 @@ class BaseNet(nn.Module):
 
 
 class TransferNet(nn.Module):
-    def __init__(self):
+    def __init__(self, output_size):
         super(TransferNet, self).__init__()
         self.features = initial_model.features
         self.classifier = nn.Sequential(
@@ -51,7 +51,7 @@ class TransferNet(nn.Module):
             nn.Dropout(),
             nn.Linear(2048, 2048),
             nn.ReLU(inplace=True),
-            nn.Linear(2048, 10)
+            nn.Linear(2048, output_size)
         )
 
     def forward(self, x):
@@ -97,9 +97,30 @@ class MinimalNet(nn.Module):
         return x
 
 
-def loss():
+nets = {"transfer": TransferNet, "simple": Net}
+
+
+def get_net(net_name, num_classes):
+    return nets[net_name](num_classes)
+
+
+def cross_entropy():
     return nn.CrossEntropyLoss()
 
 
-def optimizer(net):
+criterion = {"crossentropy": cross_entropy}
+
+
+def get_criterion(criterion_name):
+    return criterion[criterion_name]()
+
+
+def sgd(net):
     return optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+
+
+optimizers = {"sgd": sgd}
+
+
+def get_optimizer(optimizer_name, net):
+    return optimizers[optimizer_name](net)

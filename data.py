@@ -27,13 +27,14 @@ def transform2():
          transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
 
 
-def get_data(transform, path_type='r'):
-    if path_type == 'a':
-        csv_file = '/home/trocket/PycharmProjects/parser/cartrainingset.csv'
-        root_dir = '/home/trocket/images/'
-    else:
-        csv_file = 'parser/cartrainingset.csv'
-        root_dir = 'images/'
-    car_dataset = parser.CarDataset(csv_file, root_dir, transform)
+trans = {"main": transform2, "old": transformation}
+
+
+def get_transform(transform_name):
+    return trans[transform_name]()
+
+
+def get_data(transform, img_path, csv_path):
+    car_dataset = parser.CarDataset(csv_path, img_path, transform)
     return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2), \
         car_dataset.get_classes()

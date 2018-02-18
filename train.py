@@ -4,8 +4,6 @@
 import torch
 import numpy as np
 from torch.autograd import Variable
-classes = ('plane', 'car', 'bird', 'cat',
-           'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 
 def train(net, trainloader, optimizer, criterion):
