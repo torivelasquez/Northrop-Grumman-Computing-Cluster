@@ -2,14 +2,15 @@
 # functions:
 # 	getaccuracy(): compares prediction to the actual label in test data set
 # 	getaccuracybyclass(): compares prediction to the actual label for every class
-
+#   getconfusionmatrix(): creates a confusion matrix for classification
+#   multiclass_simplify_to_binary(): for a specific class simplifies the matrix to a two by two matrix based on one vs all manner.
 
 import torch
 from torch.autograd import Variable
 from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
-
+import math
 
 def classify(img_name, net, transform, classes):
     image = Image.open(img_name)
@@ -21,19 +22,13 @@ def classify(img_name, net, transform, classes):
 
 def get_accuracy(testloader, net):
     correct = 0
-    incorrect=0
     total = 0
-    TP=0
-    TN=0
-    FP=0
-    FN=0
     for data in testloader:
         images, labels = data
         outputs = net(Variable(images))
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum()
-        incorrect += (predicted != labels).sum()
     print('Accuracy of the network on the test images: %d %%' % (100 * correct / total))
 
 
@@ -56,14 +51,47 @@ def get_accuracy_by_class(testloader, net, classes):
 
 
 def compute_confusion_matrix(testloader,net,classes):
-    confusionmatrix = np.zeros((len(classes), len(classes)),dtype=int)
-    print(confusionmatrix)
+    confusion_matrix = np.zeros((len(classes), len(classes)),dtype=int)
     for data in testloader:
         images, labels = data
         batch_size = images.size()[0]
         outputs = net(Variable(images))
         _, predicted = torch.max(outputs.data, 1)
         for i in range(batch_size):
-            confusionmatrix[labels[i]][predicted[i]]+=1
-    print(confusionmatrix,confusionmatrix.sum())
+            confusion_matrix[labels[i]][predicted[i]]+=1
+    print(confusion_matrix,confusion_matrix.sum())
+    return confusion_matrix
+
+
+def multi_class_simplify_to_binary(matrix,classtype):
+    binary_matrix = np.zeros((2,2),dtype=int)
+    side=int(math.sqrt(matrix.size))
+    for i in range(side):
+        for j in range(side):
+            if classtype == i and classtype == j:
+                binary_matrix[0][0] += matrix[i][j]
+            elif classtype != i and classtype == j:
+                binary_matrix[0][1] += matrix[i][j]
+            elif classtype == i and classtype != j:
+                binary_matrix[1][0] += matrix[i][j]
+            else:
+                binary_matrix[1][1] += matrix[i][j]
+    return binary_matrix
+
+
+def mcc_score(binary_matrix):
+    tp = binary_matrix[0][0]
+    tn = binary_matrix[1][1]
+    fp = binary_matrix[0][1]
+    fn = binary_matrix[1][0]
+    mcc_val = (tp * tn - fp * fn)/(math.sqrt((tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)))
+    return mcc_val
+
+
+def get_mcc_by_class(matrix,classes):
+    for i in range(len(classes)):
+        binary_matrix=multi_class_simplify_to_binary(matrix,i)
+        score = mcc_score(binary_matrix)
+        print('MCC Score of', classes[i], ":", score)
+
 

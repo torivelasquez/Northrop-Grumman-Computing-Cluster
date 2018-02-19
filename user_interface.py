@@ -3,7 +3,7 @@
 import runtime_parameters
 import net_algorithms
 import data
-from testing import get_accuracy, get_accuracy_by_class, classify,compute_confusion_matrix
+from testing import get_accuracy, get_accuracy_by_class, classify,compute_confusion_matrix,mcc_score, multi_class_simplify_to_binary,get_mcc_by_class
 from train import train
 import torch
 
@@ -36,7 +36,11 @@ while True:
             data_set, classes = data.get_data(transform, params.get("images_loc"), params.get("test_data_loc"))
             get_accuracy(data_set, net)
             get_accuracy_by_class(data_set, net, classes)
-            compute_confusion_matrix(data_set, net, classes)
+            confusion_matrix=compute_confusion_matrix(data_set, net, classes)
+            #one_vs_all_matrix=multi_class_simplify_to_binary(confusion_matrix,1)
+            #mcc_score(one_vs_all_matrix)
+            get_mcc_by_class(confusion_matrix , classes)
+
     elif cmd_split[0] == "class":
         if test_len(cmd_split, 2):
             transform = data.get_transform(params.get("test_transform"))
