@@ -6,8 +6,8 @@ import numpy as np
 from torch.autograd import Variable
 
 
-def train(net, trainloader, optimizer, criterion):
-    for epoch in range(1):  # loop over the dataset multiple times
+def train(net, trainloader, optimizer, criterion, epochs):
+    for epoch in range(epochs):  # loop over the dataset multiple times
 
         running_loss = 0.0
         # print(trainloader,"output")

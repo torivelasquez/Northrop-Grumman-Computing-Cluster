@@ -1,5 +1,6 @@
 # this file contains the interface which serves as the driver for the rest of the software
 
+import sys
 import runtime_parameters
 import net_algorithms
 import data
@@ -16,7 +17,10 @@ def test_len(cmd_split, num):
 
 
 params = runtime_parameters.Parameters()
-pathtype = ''
+print(sys.argv)
+if len(sys.argv) == 2:
+    print(sys.argv[1])
+    params.read_file(sys.argv[1])
 while True:
     cmd = input(">>>")
     cmd_split = cmd.split()
@@ -24,16 +28,16 @@ while True:
         break
     elif cmd_split[0] == "train":
         if test_len(cmd_split, 1):
-            transform = data.get_transform(params.get("train_transform"))
-            data_set, classes = data.get_data(transform, params.get("images_loc"), params.get("train_data_loc"))
-            net = net_algorithms.get_net(params.get("net_type"), len(classes))
-            criterion = net_algorithms.get_criterion(params.get("criterion"))
-            optimizer = net_algorithms.get_optimizer(params.get("optimizer"), net)
-            train(net, data_set, optimizer, criterion)
+            transform = data.get_transform(params.train_transform)
+            data_set, classes = data.get_data(transform, params.images_loc, params.train_data_loc)
+            net = net_algorithms.get_net(params.net_type, len(classes))
+            criterion = net_algorithms.get_criterion(params.criterion)
+            optimizer = net_algorithms.get_optimizer(params.optimizer, net)
+            train(net, data_set, optimizer, criterion, params.epochs)
     elif cmd_split[0] == "test":
         if test_len(cmd_split, 1):
-            transform = data.get_transform(params.get("test_transform"))
-            data_set, classes = data.get_data(transform, params.get("images_loc"), params.get("test_data_loc"))
+            transform = data.get_transform(params.test_transform)
+            data_set, classes = data.get_data(transform, params.images_loc, params.test_data_loc)
             get_accuracy(data_set, net)
             get_accuracy_by_class(data_set, net, classes)
             confusion_matrix=compute_confusion_matrix(data_set, net, classes)
@@ -43,18 +47,21 @@ while True:
 
     elif cmd_split[0] == "class":
         if test_len(cmd_split, 2):
-            transform = data.get_transform(params.get("test_transform"))
-            data_set, classes = data.get_data(transform, params.get("images_loc"), params.get("train_data_loc"))
-            classify(params.get("images_loc") + cmd_split[1], net, transform, classes)
+            transform = data.get_transform(params.test_transform)
+            data_set, classes = data.get_data(transform, params.images_loc, params.train_data_loc)
+            classify(params.images_loc + cmd_split[1], net, transform, classes)
     elif cmd_split[0] == "save":
         if test_len(cmd_split, 1):
-            torch.save(net, params.get("save_loc"))
+            torch.save(net, params.save_loc)
     elif cmd_split[0] == "load":
         if test_len(cmd_split, 1):
-            net = torch.load(params.get("load_loc"))
+            net = torch.load(params.load_loc)
     elif cmd_split[0] == 'set':
         if test_len(cmd_split, 3):
             params.set(cmd_split[1], cmd_split[2])
+    elif cmd_split[0] == "settings":
+        if test_len(cmd_split, 2):
+            params.read_file(cmd_split[1])
     elif cmd_split[0] == "help":
         if test_len(cmd_split, 1):
             print(" <train> to train model\n <test> to test model\n <save> saves net\n <load> loads net\n <class> take"
