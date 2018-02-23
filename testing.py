@@ -11,6 +11,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+from sklearn import metrics
 
 def classify(img_name, net, transform, classes):
     image = Image.open(img_name)
@@ -20,47 +21,40 @@ def classify(img_name, net, transform, classes):
     print(classes[c[0]])
 
 
-def get_accuracy(testloader, net):
+def get_accuracy(matrix,classes):
     correct = 0
-    total = 0
-    for data in testloader:
-        images, labels = data
-        outputs = net(Variable(images))
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum()
+    total = matrix.sum()
+    for i in range(len(classes)):
+        correct += matrix[i][i]
     print('Accuracy of the network on the test images: %d %%' % (100 * correct / total))
 
 
-def get_accuracy_by_class(testloader, net, classes):
-    class_correct = list(0. for i in range(10))
-    class_total = list(0. for i in range(10))
-    for data in testloader:
-        images, labels = data
-        batch_size = images.size()[0]
-        outputs = net(Variable(images))
-        _, predicted = torch.max(outputs.data, 1)
-        c = (predicted == labels).squeeze()
-        for i in range(batch_size):
-            label = labels[i]
-            class_correct[label] += c[i]
-            class_total[label] += 1
+def get_accuracy_by_class(matrix,classes):
+    class_correct=list(0. for i in range(len(classes)))
+    class_total = list(0. for i in range(len(classes)))
     for i in range(len(classes)):
-        print('Accuracy of %5s : %2d %%' % (
-        classes[i], 100 * class_correct[i] / class_total[i]))
+        class_correct[i]=matrix[i][i]
+        class_total[i]=matrix[i].sum()
+
+    for i in range(len(classes)):
+        print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
 
 
 def compute_confusion_matrix(testloader,net,classes):
     confusion_matrix = np.zeros((len(classes), len(classes)),dtype=int)
+    ypred = []
+    yactual = []
     for data in testloader:
         images, labels = data
         batch_size = images.size()[0]
         outputs = net(Variable(images))
         _, predicted = torch.max(outputs.data, 1)
         for i in range(batch_size):
+            ypred.append(predicted[i])
+            yactual.append(labels[i])
             confusion_matrix[labels[i]][predicted[i]]+=1
     print(confusion_matrix,confusion_matrix.sum())
-    return confusion_matrix
+    return confusion_matrix,ypred,yactual
 
 
 def multi_class_simplify_to_binary(matrix,classtype):
@@ -79,6 +73,22 @@ def multi_class_simplify_to_binary(matrix,classtype):
     return binary_matrix
 
 
+def roc_curve(predicted, labels, classes):
+    for i in range(len(classes)):
+        fpr, tpr, _ = metrics.roc_curve(predicted, labels,i)
+        plt.figure()
+        plt.plot(fpr, tpr)
+        print(fpr, tpr)
+        plt.xlim([0.0, 1.01])
+        plt.ylim([0.0, 1.01])
+        plt.rcParams['font.size'] = 12
+        plt.title('ROC curve for %s %%' % (classes[i]))
+        plt.xlabel('FPR (1 - Specificity)')
+        plt.ylabel('TPR (Sensitivity)')
+        plt.grid(True)
+        plt.show()
+
+
 def mcc_score(binary_matrix):
     tp = binary_matrix[0][0]
     tn = binary_matrix[1][1]
@@ -90,8 +100,6 @@ def mcc_score(binary_matrix):
 
 def get_mcc_by_class(matrix,classes):
     for i in range(len(classes)):
-        binary_matrix=multi_class_simplify_to_binary(matrix,i)
+        binary_matrix = multi_class_simplify_to_binary(matrix,i)
         score = mcc_score(binary_matrix)
         print('MCC Score of', classes[i], ":", score)
-
-

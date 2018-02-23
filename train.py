@@ -29,8 +29,8 @@ def train(net, trainloader, optimizer, criterion, epochs):
 
             # print statistics
             running_loss += loss.data[0]
-            if i % 2000 == 1999:    # print every 2000 mini-batches
+            if i % 20 == 19:    # print every 2000 mini-batches
                 print('[%d, %5d] loss: %.3f' %
-                      (epoch + 1, i + 1, running_loss / 2000))
+                      (epoch + 1, i + 1, running_loss / 20))
                 running_loss = 0.0
     print('Finished Training')
