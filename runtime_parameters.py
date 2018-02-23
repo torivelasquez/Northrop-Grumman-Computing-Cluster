@@ -14,7 +14,8 @@ class Parameters:
         self.optimizer = "sgd"
         self.train_transform = "main"
         self.test_transform = "main"
-        self.set_map = {"net_type": self.set_net_type, "train_data_loc": self.set_train_data_loc,
+        self.set_map = {"file": self.read_file, "net_type": self.set_net_type,
+                        "train_data_loc": self.set_train_data_loc,
                         "test_data_loc": self.set_test_data_loc, "images_loc": self.set_images_loc,
                         "save_loc": self.set_save_loc, "load_loc": self.set_load_loc, "epochs": self.set_epochs,
                         "criterion": self.set_criterion, "optimizer": self.set_optimizer,
