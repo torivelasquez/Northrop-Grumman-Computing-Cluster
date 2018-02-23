@@ -3,6 +3,8 @@ import math
 
 
 def data_spliter(in_file_name, out_file_names, fractions):
+    if not math.isclose(sum(fractions), 1, rel_tol = 1e-5):
+        return 1
     num_in_lines = 0
     with open(in_file_name, 'r') as in_file:
         for _ in in_file:
