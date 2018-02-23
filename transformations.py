@@ -8,10 +8,8 @@
 #   transform2(): transform of the data to work with fine tuned alexnet (32 by 32 image size causes an error as the
 #   image size becomes {1,1,n} which breaks maxpooling)
 
-import torch
-import torchvision
+
 import torchvision.transforms as transforms
-import parser.parser as parser
 
 
 def transformation():
@@ -32,9 +30,3 @@ trans = {"main": transform2, "old": transformation}
 
 def get_transform(transform_name):
     return trans[transform_name]()
-
-
-def get_data(transform, img_path, csv_path):
-    car_dataset = parser.CarDataset(csv_path, img_path, transform)
-    return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2), \
-        car_dataset.get_classes()

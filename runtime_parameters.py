@@ -28,6 +28,7 @@ class Parameters:
 
     def set_train_data_loc(self, new_variable):
         self.train_data_loc = new_variable
+        print(self.train_data_loc)
 
     def set_test_data_loc(self, new_variable):
         self.test_data_loc = new_variable

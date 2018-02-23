@@ -1,6 +1,6 @@
 from torch.autograd import Variable
 import net_algorithms as netDefine
-import data as data
+import transformations as data
 import train as train
 from testing import get_accuracy
 from testing import get_accuracy_by_class

@@ -8,6 +8,12 @@ import torch
 import numpy as np
 
 
+def get_data(transform, img_path, csv_path):
+    car_dataset = CarDataset(csv_path, img_path, transform)
+    return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2), \
+        car_dataset.get_classes()
+
+
 # http://pytorch.org/tutorials/beginner/data_loading_tutorial.html
 class CarDataset(Dataset):
 
