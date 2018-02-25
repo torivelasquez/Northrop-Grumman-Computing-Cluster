@@ -11,7 +11,7 @@ from train import train
 import torch
 
 
-def test_len(cmd_split, num):
+def len_test(cmd_split, num):
     if len(cmd_split) == num:
         return True
     print(cmd_split[0], " expects ", num, " arguments ", len(cmd_split), " given. Use <help> for help")
@@ -27,7 +27,7 @@ while True:
     if cmd_split[0] == "quit":
         break
     elif cmd_split[0] == "train":
-        if test_len(cmd_split, 1):
+        if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.train_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
             net = net_algorithms.get_net(params.net_type, len(classes))
@@ -35,7 +35,7 @@ while True:
             optimizer = net_algorithms.get_optimizer(params.optimizer, net)
             train(net, data_set, optimizer, criterion, params.epochs)
     elif cmd_split[0] == "test":
-        if test_len(cmd_split, 1):
+        if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.test_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc)
             confusion_matrix,predicted,labels=compute_confusion_matrix(data_set, net, classes)
@@ -46,24 +46,24 @@ while True:
 
 
     elif cmd_split[0] == "class":
-        if test_len(cmd_split, 2):
+        if len_test(cmd_split, 2):
             transform = transformations.get_transform(params.test_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
             classify(params.images_loc + cmd_split[1], net, transform, classes)
     elif cmd_split[0] == "save":
-        if test_len(cmd_split, 1):
+        if len_test(cmd_split, 1):
             torch.save(net, params.save_loc)
     elif cmd_split[0] == "load":
-        if test_len(cmd_split, 1):
+        if len_test(cmd_split, 1):
             net = torch.load(params.load_loc)
     elif cmd_split[0] == 'set':
-        if test_len(cmd_split, 3):
+        if len_test(cmd_split, 3):
             params.set(cmd_split[1], cmd_split[2])
     elif cmd_split[0] == "settings":
-        if test_len(cmd_split, 2):
+        if len_test(cmd_split, 2):
             params.read_file(cmd_split[1])
     elif cmd_split[0] == "split":
-        if test_len(cmd_split, 3):
+        if len_test(cmd_split, 3):
             source_file = cmd_split[1]
             number_of_splits = int(cmd_split[2])
             target_files = []
@@ -81,7 +81,7 @@ while True:
             else:
                 print("unidentified error")
     elif cmd_split[0] == "help":
-        if test_len(cmd_split, 1):
+        if len_test(cmd_split, 1):
             print(" <train> to train model\n <test> to test model\n <save> saves net\n <load> loads net\n <class> take"
                   " image and classify it with the net")
     else:
