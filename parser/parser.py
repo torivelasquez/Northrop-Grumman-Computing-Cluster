@@ -22,7 +22,8 @@ class CarDataset(Dataset):
             for row in reader:
                 if not row[1] in self.classes:
                     self.classes.append(row[1])
-                self.car_list.append(car.Car(self.classes.index(row[1]), row[2]))
+                self.car_list.append(car.Car(self.classes.index(row[1]), row[2],
+                                             (int(row[4]), int(row[5]), int(row[6]), int(row[7]))))
         self.root_dir = root_dir
         self.transform = transform
 
@@ -31,7 +32,9 @@ class CarDataset(Dataset):
 
     def __getitem__(self, index):
         img_name = os.path.join(self.root_dir, self.car_list[index]["img_name"])
-        image = Image.open(img_name)
+        bbox = self.car_list[index]["bbox"]
+        og_image = Image.open(img_name)
+        image = og_image.crop(bbox)
         image = image.convert("RGB")
         style = self.car_list[index]["style"]
         if self.transform:

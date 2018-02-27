@@ -1,13 +1,9 @@
-import matplotlib.pyplot as plt
-from skimage import data, io
-import parser
+import parser.parser as parser
 
-csv_file = '/home/trocket/PycharmProjects/parser/cartrainingsetmini.csv'
-root_dir = '/home/trocket/images/'
+csv_file = 'parser/cartrainingsetmini.csv'
+root_dir = 'images/'
 car_dataset = parser.CarDataset(csv_file, root_dir)
 
-fig = plt.figure()
 for i in range(len(car_dataset)):
     sample = car_dataset[i]
-    io.imshow(sample["image"])
-    plt.show()
+    sample[0].show()
