@@ -9,7 +9,7 @@ def data_spliter(in_file_name, out_file_names, fractions):
     with open(in_file_name, 'r') as in_file:
         for _ in in_file:
             num_in_lines += 1
-    with open(in_file_name, 'r') as in_file:
+        in_file.seek(0)
         out_files = []
         num_writes_left = []
         for frac in fractions:
