@@ -78,7 +78,6 @@ def roc_curve(predicted, labels, classes):
         fpr, tpr, _ = metrics.roc_curve(predicted, labels,i)
         plt.figure()
         plt.plot(fpr, tpr)
-        print(fpr, tpr)
         plt.xlim([0.0, 1.01])
         plt.ylim([0.0, 1.01])
         plt.rcParams['font.size'] = 12
@@ -97,6 +96,11 @@ def mcc_score(binary_matrix):
     mcc_val = (tp * tn - fp * fn)/(math.sqrt((tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)))
     return mcc_val
 
+def auc_metric(predicted, labels, classes):
+    for i in range(len(classes)):
+        fpr, tpr, _ = metrics.roc_curve(predicted,labels,i)
+        auc_val = metrics.auc(fpr,tpr)
+        print('AUC score of', classes[i], ':', auc_val)
 
 def get_mcc_by_class(matrix,classes):
     for i in range(len(classes)):

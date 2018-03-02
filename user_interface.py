@@ -6,7 +6,7 @@ import net_algorithms
 import parser.parser as parser
 import transformations
 from data_spliter import data_spliter
-from testing import roc_curve, get_accuracy, get_accuracy_by_class, classify,compute_confusion_matrix,mcc_score, multi_class_simplify_to_binary,get_mcc_by_class
+from testing import auc_metric, roc_curve, get_accuracy, get_accuracy_by_class, classify,compute_confusion_matrix,mcc_score, multi_class_simplify_to_binary,get_mcc_by_class
 from train import train
 import torch
 
@@ -42,7 +42,9 @@ while True:
             get_accuracy(confusion_matrix, classes)
             get_accuracy_by_class(confusion_matrix, classes)
             get_mcc_by_class(confusion_matrix , classes)
-            roc_curve(predicted,labels,classes)
+            #  roc_curve(predicted,labels,classes)
+            auc_metric(predicted,labels,classes)
+
 
 
     elif cmd_split[0] == "class":
