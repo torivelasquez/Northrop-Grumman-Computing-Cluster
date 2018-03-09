@@ -93,16 +93,24 @@ def mcc_score(binary_matrix):
     tn = binary_matrix[1][1]
     fp = binary_matrix[0][1]
     fn = binary_matrix[1][0]
-    mcc_val = (tp * tn - fp * fn)/(math.sqrt((tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)))
+    if math.sqrt((tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)) != 0:
+        mcc_val = (tp * tn - fp * fn)/(math.sqrt((tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)))
+    else:
+        mcc_val="no entries in class"
     return mcc_val
+
 
 def auc_metric(predicted, labels, classes):
     for i in range(len(classes)):
         fpr, tpr, _ = metrics.roc_curve(predicted,labels,i)
-        auc_val = metrics.auc(fpr,tpr)
+        if len(fpr) != 0 and len(tpr) != 0:
+            auc_val = metrics.auc(fpr,tpr)
+        else:
+            auc_val="tpr or fpr is zero"
         print('AUC score of', classes[i], ':', auc_val)
 
-def get_mcc_by_class(matrix,classes):
+
+def get_mcc_by_class(matrix, classes):
     for i in range(len(classes)):
         binary_matrix = multi_class_simplify_to_binary(matrix,i)
         score = mcc_score(binary_matrix)
