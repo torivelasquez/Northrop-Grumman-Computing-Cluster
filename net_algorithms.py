@@ -17,8 +17,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torchvision.models as models
-initial_model = models.alexnet(pretrained=True)
-
+alexnet = models.alexnet(pretrained=True)
+resnet=models.resnet18(pretrained=True)
 
 class BaseNet(nn.Module):
     def __init__(self):
@@ -43,7 +43,7 @@ class BaseNet(nn.Module):
 class TransferNet(nn.Module):
     def __init__(self, output_size):
         super(TransferNet, self).__init__()
-        self.features = initial_model.features
+        self.features = alexnet.features
         self.classifier = nn.Sequential(
             nn.Dropout(),
             nn.Linear(256 * 11 * 11, 2048),
@@ -60,6 +60,25 @@ class TransferNet(nn.Module):
         y = self.classifier(f)
         return y
 
+
+class ResNet(nn.Module):
+    def __init__(self,output_size):
+        super(ResNet, self).__init__()
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+        self.classifier = nn.Sequential(
+            # nn.Linear(1568, 256),
+            # print(nn.Linear(512 * 9, output_size)),
+            nn.Linear(512* 7 * 7, output_size)
+        )
+
+    def forward(self, x):
+        # print(x)
+        f = self.features(x)
+        # print(f)
+        f = f.view(f.size(0), 512 * 7 * 7) # the size of tensor is 512 * 7 * 7
+        # print(f)
+        y = self.classifier(f)
+        return y
 
 class Net(nn.Module):
     def __init__(self, output_size):
@@ -97,7 +116,7 @@ class MinimalNet(nn.Module):
         return x
 
 
-nets = {"transfer": TransferNet, "simple": Net}
+nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet}
 
 
 def get_net(net_name, num_classes):
