@@ -32,6 +32,9 @@ while True:
             transform = transformations.get_transform(params.train_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
             net = net_algorithms.get_net(params.net_type, len(classes))
+            if(torch.cuda.device_count() > 0): # use gpu if one exists on machine
+                net=net.cuda()
+                data_set=data_set.cuda()
             criterion = net_algorithms.get_criterion(params.criterion)
             optimizer = net_algorithms.get_optimizer(params.optimizer, net)
             train(net, data_set, optimizer, criterion, params.epochs)
