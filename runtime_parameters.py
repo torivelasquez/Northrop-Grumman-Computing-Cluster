@@ -14,15 +14,20 @@ class Parameters:
         self.optimizer = "sgd"
         self.train_transform = "main"
         self.test_transform = "main"
+        self.grayscale = False
         self.set_map = {"file": self.read_file, "net_type": self.set_net_type,
                         "train_data_loc": self.set_train_data_loc,
                         "test_data_loc": self.set_test_data_loc, "images_loc": self.set_images_loc,
                         "save_loc": self.set_save_loc, "load_loc": self.set_load_loc, "epochs": self.set_epochs,
                         "criterion": self.set_criterion, "optimizer": self.set_optimizer,
-                        "train_transform": self.set_train_transform, "test_transform": self.set_test_transform}
+                        "train_transform": self.set_train_transform, "test_transform": self.set_test_transform,
+                        "grayscale": self.set_grayscale}
 
     def set(self, param, new_variable):
-        self.set_map[param](new_variable)
+        if param in self.set_map:
+            self.set_map[param](new_variable)
+        else:
+            print(param, " is not a recognized parameter")
 
     def set_net_type(self, new_variable):
         self.net_type = new_variable
@@ -56,6 +61,13 @@ class Parameters:
 
     def set_test_transform(self, new_variable):
         self.test_transform = new_variable
+
+    def set_grayscale(self, new_variable):
+        if new_variable in ["Yes", "yes", "True", "true", "1"]:
+            self.grayscale = True
+        elif new_variable in ["No", "no", "False", "false", "0"]:
+            self.grayscale = False
+
 
     def get_net_type(self):
         return self.net_type

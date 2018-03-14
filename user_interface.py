@@ -30,7 +30,7 @@ while True:
     elif cmd_split[0] == "train":
         if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.train_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
+            data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
             net = net_algorithms.get_net(params.net_type, len(classes))
             if(torch.cuda.device_count() > 0): # use gpu if one exists on machine
                 net=net.cuda()
@@ -42,7 +42,7 @@ while True:
     elif cmd_split[0] == "test":
         if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.test_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc)
+            data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
             confusion_matrix,predicted,labels=compute_confusion_matrix(data_set, net, classes)
             get_accuracy(confusion_matrix, classes)
             get_accuracy_by_class(confusion_matrix, classes)
@@ -54,7 +54,7 @@ while True:
         if len_test(cmd_split, 2):
             if os.path.isfile(params.images_loc + cmd_split[1]):
                 transform = transformations.get_transform(params.test_transform)
-                data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
+                data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
                 classify(params.images_loc + cmd_split[1], net, transform, classes)
             else:
                 print("image not found")

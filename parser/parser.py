@@ -6,15 +6,16 @@ import parser.car as car
 import torch
 
 
-def get_data(transform, img_path, csv_path):
-    car_dataset = CarDataset(csv_path, img_path, transform)
+def get_data(transform, img_path, csv_path, grayscale):
+    car_dataset = CarDataset(csv_path, img_path, transform, grayscale)
     return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2), \
         car_dataset.get_classes()
 
 
 class CarDataset(Dataset):
 
-    def __init__(self, csv_file, root_dir, transform=None):
+    def __init__(self, csv_file, root_dir, transform=None, grayscale = False):
+        self.grayscale = grayscale
         self.car_list = []
         self.classes = []
         with open(csv_file) as csvfile:
@@ -35,7 +36,10 @@ class CarDataset(Dataset):
         bbox = self.car_list[index]["bbox"]
         og_image = Image.open(img_name)
         image = og_image.crop(bbox)
-        image = image.convert("RGB")
+        if self.grayscale:
+            image = image.convert("L")
+        else:
+            image = image.convert("RGB")
         style = self.car_list[index]["style"]
         if self.transform:
             image = self.transform(image)
