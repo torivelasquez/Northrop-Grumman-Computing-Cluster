@@ -51,10 +51,13 @@ while True:
             auc_metric(predicted,labels,classes)
 
     elif cmd_split[0] == "class":
-        if len_test(cmd_split, 2) and os.path.isfile(cmd_split[1]):
-            transform = transformations.get_transform(params.test_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
-            classify(params.images_loc + cmd_split[1], net, transform, classes)
+        if len_test(cmd_split, 2):
+            if os.path.isfile(params.images_loc + cmd_split[1]):
+                transform = transformations.get_transform(params.test_transform)
+                data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
+                classify(params.images_loc + cmd_split[1], net, transform, classes)
+            else:
+                print("image not found")
 
     elif cmd_split[0] == "save":
         if len_test(cmd_split, 1):
