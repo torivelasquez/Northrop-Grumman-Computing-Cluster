@@ -98,4 +98,3 @@ class Parameters:
                 line = line.partition(" = ")
                 if not line[2] == '':
                     self.set(line[0], line[2])
-

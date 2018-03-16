@@ -15,8 +15,12 @@ def train(net, trainloader, optimizer, criterion, epochs):
             inputs, target = data
             # target = torch.LongTensor(np.asarray(target, int))
             # print(target)
-            # wrap them in Variable
-            inputs, target = Variable(inputs), Variable(target)
+
+            # Check if GPUs are available and wrap data in variables
+            if torch.cuda.is_available():
+                inputs, target = Variable(inputs.cuda()), Variable(target.cuda())
+            else:
+                inputs, target = Variable(inputs), Variable(target)
 
             # zero the parameter gradients
             optimizer.zero_grad()

@@ -15,13 +15,17 @@ from sklearn import metrics
 
 def classify(img_name, net, transform, classes):
     image = Image.open(img_name)
-    image = transform(image).view((1, 3, 400, 400))
-    output = net(Variable(image))
+    if torch.cuda.is_available():
+        image = transform(image).view((1, 3, 400, 400))
+        output = net(Variable(image.cuda()))
+    else:
+        image = transform(image).view((1, 3, 400, 400))
+        output = net(Variable(image))
     _, c = torch.max(output.data, 1)
     print(classes[c[0]])
 
 
-def get_accuracy(matrix,classes):
+def get_accuracy(matrix, classes):
     correct = 0
     total = matrix.sum()
     for i in range(len(classes)):
@@ -29,36 +33,39 @@ def get_accuracy(matrix,classes):
     print('Accuracy of the network on the test images: %d %%' % (100 * correct / total))
 
 
-def get_accuracy_by_class(matrix,classes):
-    class_correct=list(0. for i in range(len(classes)))
+def get_accuracy_by_class(matrix, classes):
+    class_correct = list(0. for i in range(len(classes)))
     class_total = list(0. for i in range(len(classes)))
     for i in range(len(classes)):
-        class_correct[i]=matrix[i][i]
-        class_total[i]=matrix[i].sum()
+        class_correct[i] = matrix[i][i]
+        class_total[i] = matrix[i].sum()
 
     for i in range(len(classes)):
         print('Accuracy of %5s : %2d %%' % (classes[i], 100 * class_correct[i] / class_total[i]))
 
 
-def compute_confusion_matrix(testloader,net,classes):
-    confusion_matrix = np.zeros((len(classes), len(classes)),dtype=int)
+def compute_confusion_matrix(testloader, net, classes):
+    confusion_matrix = np.zeros((len(classes), len(classes)), dtype=int)
     ypred = []
     yactual = []
     for data in testloader:
         images, labels = data
         batch_size = images.size()[0]
-        outputs = net(Variable(images))
+        if torch.cuda.is_available():
+            outputs = net(Variable(images.cuda()))
+        else:
+            outputs = net(Variable(images))
         _, predicted = torch.max(outputs.data, 1)
         for i in range(batch_size):
             ypred.append(predicted[i])
             yactual.append(labels[i])
-            confusion_matrix[labels[i]][predicted[i]]+=1
-    print(confusion_matrix,confusion_matrix.sum())
-    return confusion_matrix,ypred,yactual
+            confusion_matrix[labels[i]][predicted[i]] += 1
+    print(confusion_matrix, confusion_matrix.sum())
+    return confusion_matrix, ypred, yactual
 
 
-def multi_class_simplify_to_binary(matrix,classtype):
-    binary_matrix = np.zeros((2,2),dtype=int)
+def multi_class_simplify_to_binary(matrix, classtype):
+    binary_matrix = np.zeros((2, 2), dtype=int)
     side=int(math.sqrt(matrix.size))
     for i in range(side):
         for j in range(side):
@@ -75,7 +82,7 @@ def multi_class_simplify_to_binary(matrix,classtype):
 
 def roc_curve(predicted, labels, classes):
     for i in range(len(classes)):
-        fpr, tpr, _ = metrics.roc_curve(predicted, labels,i)
+        fpr, tpr, _ = metrics.roc_curve(predicted, labels, i)
         plt.figure()
         plt.plot(fpr, tpr)
         plt.xlim([0.0, 1.01])
@@ -96,17 +103,17 @@ def mcc_score(binary_matrix):
     if math.sqrt((tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)) != 0:
         mcc_val = (tp * tn - fp * fn)/(math.sqrt((tp + fp)*(tp + fn)*(tn + fp)*(tn + fn)))
     else:
-        mcc_val="no entries in class"
+        mcc_val = "no entries in class"
     return mcc_val
 
 
 def auc_metric(predicted, labels, classes):
     for i in range(len(classes)):
-        fpr, tpr, _ = metrics.roc_curve(predicted,labels,i)
+        fpr, tpr, _ = metrics.roc_curve(predicted, labels, i)
         if len(fpr) != 0 and len(tpr) != 0:
-            auc_val = metrics.auc(fpr,tpr)
+            auc_val = metrics.auc(fpr, tpr)
         else:
-            auc_val="tpr or fpr is zero"
+            auc_val = "tpr or fpr is zero"
         print('AUC score of', classes[i], ':', auc_val)
 
 

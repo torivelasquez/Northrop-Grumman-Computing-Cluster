@@ -7,7 +7,7 @@ import net_algorithms
 import parser.parser as parser
 import transformations
 from data_spliter import data_spliter
-from testing import auc_metric, roc_curve, get_accuracy, get_accuracy_by_class, classify,compute_confusion_matrix,mcc_score, multi_class_simplify_to_binary,get_mcc_by_class
+from testing import auc_metric, roc_curve, get_accuracy, get_accuracy_by_class, classify, compute_confusion_matrix, mcc_score, multi_class_simplify_to_binary, get_mcc_by_class
 from train import train
 import torch
 
@@ -32,6 +32,10 @@ while True:
             transform = transformations.get_transform(params.train_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
             net = net_algorithms.get_net(params.net_type, len(classes))
+            if torch.cuda.device_count() > 1:
+                net = nn.DataParallel(net)
+            if torch.cuda.is_available():
+                net.cuda()
             criterion = net_algorithms.get_criterion(params.criterion)
             optimizer = net_algorithms.get_optimizer(params.optimizer, net)
             train(net, data_set, optimizer, criterion, params.epochs)
@@ -40,12 +44,12 @@ while True:
         if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.test_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc)
-            confusion_matrix,predicted,labels=compute_confusion_matrix(data_set, net, classes)
+            confusion_matrix,predicted,labels = compute_confusion_matrix(data_set, net, classes)
             get_accuracy(confusion_matrix, classes)
             get_accuracy_by_class(confusion_matrix, classes)
             #  get_mcc_by_class(confusion_matrix , classes)
             #  roc_curve(predicted,labels,classes)
-            auc_metric(predicted,labels,classes)
+            auc_metric(predicted, labels, classes)
 
     elif cmd_split[0] == "class":
         if len_test(cmd_split, 2) and os.path.isfile(cmd_split[1]):
@@ -55,12 +59,20 @@ while True:
 
     elif cmd_split[0] == "save":
         if len_test(cmd_split, 1):
-            torch.save(net, params.save_loc)
+            torch.save(net.state_dict(), params.save_loc)
+            # torch.save(net, params.save_loc)
+
     elif cmd_split[0] == "load":
         if len_test(cmd_split, 1):
-            file=params.load_loc
+            file = params.load_loc
             if os.path.isfile(file):
-                net = torch.load(params.load_loc)
+                net = net_algorithms.get_net(params.net_type, len(classes))
+                net.load_state_dict(torch.load(params.load_loc))
+                # net = torch.load(params.load_loc)
+                if torch.cuda.device_count() > 1:
+                    net = nn.DataParallel(net)
+                if torch.cuda.is_available():
+                    net.cuda()
             else:
                 print("neural net not found")
 
@@ -70,7 +82,7 @@ while True:
 
     elif cmd_split[0] == "settings":
         if len_test(cmd_split, 2):
-            file=cmd_split[1]
+            file = cmd_split[1]
             if os.path.isfile(file):
                 params.read_file(file)
             else:
@@ -90,9 +102,9 @@ while True:
                     file_div_percents.append(float(input(frac_request)))
                 result = data_spliter(source_file, target_files, file_div_percents)
                 if result == 0:
-                 print("Success")
+                    print("Success")
                 elif result == 1:
-                 print("Specified Fractions do not add up to 1")
+                    print("Specified Fractions do not add up to 1")
                 else:
                     print("unidentified error")
             else:
