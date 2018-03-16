@@ -7,7 +7,7 @@ import net_algorithms
 import parser.parser as parser
 import transformations
 from data_spliter import data_spliter
-from testing import auc_metric, roc_curve, get_accuracy, get_accuracy_by_class, classify, compute_confusion_matrix, mcc_score, multi_class_simplify_to_binary, get_mcc_by_class
+from testing import MAUCscore, auc_metric, roc_curve, get_accuracy, get_accuracy_by_class, classify, compute_confusion_matrix, mcc_score, multi_class_simplify_to_binary, get_mcc_by_class
 from train import train
 import torch
 
@@ -30,7 +30,7 @@ while True:
     elif cmd_split[0] == "train":
         if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.train_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
+            data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
             net = net_algorithms.get_net(params.net_type, len(classes))
             if torch.cuda.device_count() > 1:
                 net = nn.DataParallel(net)
@@ -43,19 +43,23 @@ while True:
     elif cmd_split[0] == "test":
         if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.test_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc)
-            confusion_matrix,predicted,labels = compute_confusion_matrix(data_set, net, classes)
+            data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
+            confusion_matrix, predicted,labels,score = compute_confusion_matrix(data_set, net, classes)
             get_accuracy(confusion_matrix, classes)
             get_accuracy_by_class(confusion_matrix, classes)
             #  get_mcc_by_class(confusion_matrix , classes)
-            #  roc_curve(predicted,labels,classes)
-            auc_metric(predicted, labels, classes)
+            #  roc_curve(score,labels,classes)
+            #  MAUCscore(predicted,labels,classes)
+            auc_metric(score, labels, classes)
 
     elif cmd_split[0] == "class":
-        if len_test(cmd_split, 2) and os.path.isfile(cmd_split[1]):
-            transform = transformations.get_transform(params.test_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc)
-            classify(params.images_loc + cmd_split[1], net, transform, classes)
+        if len_test(cmd_split, 2):
+            if os.path.isfile(params.images_loc + cmd_split[1]):
+                transform = transformations.get_transform(params.test_transform)
+                data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
+                classify(params.images_loc + cmd_split[1], net, transform, classes)
+            else:
+                print("image not found")
 
     elif cmd_split[0] == "save":
         if len_test(cmd_split, 1):

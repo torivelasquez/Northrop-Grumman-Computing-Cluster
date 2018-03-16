@@ -17,18 +17,18 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torchvision.models as models
-initial_model = models.alexnet(pretrained=True)
-
+alexnet = models.alexnet(pretrained=True)
+resnet=models.resnet18(pretrained=True)
 
 class BaseNet(nn.Module):
-    def __init__(self):
+    def __init__(self, output_size):
         super(BaseNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.fc1 = nn.Linear(16 * 5 * 5, 120)
         self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 10)
+        self.fc3 = nn.Linear(84, output_size)
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
@@ -43,7 +43,7 @@ class BaseNet(nn.Module):
 class TransferNet(nn.Module):
     def __init__(self, output_size):
         super(TransferNet, self).__init__()
-        self.features = initial_model.features
+        self.features = alexnet.features
         self.classifier = nn.Sequential(
             nn.Dropout(),
             nn.Linear(256 * 11 * 11, 2048),
@@ -61,10 +61,54 @@ class TransferNet(nn.Module):
         return y
 
 
+class ResNet(nn.Module):
+    def __init__(self,output_size):
+        super(ResNet, self).__init__()
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+        self.classifier = nn.Sequential(
+            # nn.Linear(1568, 256),
+            # print(nn.Linear(512 * 9, output_size)),
+            nn.Linear(512* 7 * 7, output_size)
+        )
+
+    def forward(self, x):
+        # print(x)
+        f = self.features(x)
+        # print(f)
+        f = f.view(f.size(0), 512 * 7 * 7) # the size of tensor is 512 * 7 * 7
+        # print(f)
+        y = self.classifier(f)
+        return y
+
+
 class Net(nn.Module):
     def __init__(self, output_size):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
+        self.pool = nn.MaxPool2d(2, 2)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        self.conv3 = nn.Conv2d(16, 36, 1)
+        self.fc1 = nn.Linear(82944, 120)
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 60)
+        self.fc4 = nn.Linear(60, output_size)
+
+    def forward(self, x):
+        x = self.pool(F.leaky_relu(self.conv1(x)))
+        x = self.pool(F.leaky_relu(self.conv2(x)))
+        x = self.pool(F.leaky_relu(self.conv3(x)))
+        x = x.view([x.size()[0], -1])
+        x = F.leaky_relu(self.fc1(x))
+        x = F.leaky_relu(self.fc2(x))
+        x = F.leaky_relu(self.fc3(x))
+        x = self.fc4(x)
+        return x
+
+
+class GrayNet(nn.Module):
+    def __init__(self, output_size):
+        super(GrayNet, self).__init__()
+        self.conv1 = nn.Conv2d(1, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 16, 5)
         self.conv3 = nn.Conv2d(16, 36, 1)
@@ -97,7 +141,7 @@ class MinimalNet(nn.Module):
         return x
 
 
-nets = {"transfer": TransferNet, "simple": Net}
+nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet}
 
 
 def get_net(net_name, num_classes):

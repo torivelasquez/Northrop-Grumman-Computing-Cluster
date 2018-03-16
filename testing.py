@@ -4,6 +4,7 @@
 # 	getaccuracybyclass(): compares prediction to the actual label for every class
 #   getconfusionmatrix(): creates a confusion matrix for classification
 #   multiclass_simplify_to_binary(): for a specific class simplifies the matrix to a two by two matrix based on one vs all manner.
+#   computeMAUCScore(): takes each pairwise AUC and takes the average to make a MAUC metric
 
 import torch
 from torch.autograd import Variable
@@ -12,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 from sklearn import metrics
+import torch.nn.functional as F
 
 def classify(img_name, net, transform, classes):
     image = Image.open(img_name)
@@ -48,6 +50,7 @@ def compute_confusion_matrix(testloader, net, classes):
     confusion_matrix = np.zeros((len(classes), len(classes)), dtype=int)
     ypred = []
     yactual = []
+    yscore = np.zeros([0,len(classes)])
     for data in testloader:
         images, labels = data
         batch_size = images.size()[0]
@@ -57,11 +60,12 @@ def compute_confusion_matrix(testloader, net, classes):
             outputs = net(Variable(images))
         _, predicted = torch.max(outputs.data, 1)
         for i in range(batch_size):
+            yscore=np.vstack((yscore,F.softmax(outputs[i],0).data.cpu().numpy().astype('float'))) # the softmax fetches the probabilities of the net. the data.cpu().numpy() converts tensor to numpy even with cuda
             ypred.append(predicted[i])
             yactual.append(labels[i])
             confusion_matrix[labels[i]][predicted[i]] += 1
     print(confusion_matrix, confusion_matrix.sum())
-    return confusion_matrix, ypred, yactual
+    return confusion_matrix, ypred, yactual, yscore
 
 
 def multi_class_simplify_to_binary(matrix, classtype):
@@ -80,9 +84,10 @@ def multi_class_simplify_to_binary(matrix, classtype):
     return binary_matrix
 
 
-def roc_curve(predicted, labels, classes):
+def roc_curve(score, labels, classes):
     for i in range(len(classes)):
-        fpr, tpr, _ = metrics.roc_curve(predicted, labels, i)
+        iscore = score[:, i]
+        fpr, tpr, _ = metrics.roc_curve(labels, iscore, i)
         plt.figure()
         plt.plot(fpr, tpr)
         plt.xlim([0.0, 1.01])
@@ -107,15 +112,33 @@ def mcc_score(binary_matrix):
     return mcc_val
 
 
-def auc_metric(predicted, labels, classes):
+def auc_metric(score, labels, classes):
+    #print(score)
     for i in range(len(classes)):
-        fpr, tpr, _ = metrics.roc_curve(predicted, labels, i)
-        if len(fpr) != 0 and len(tpr) != 0:
+        iscore = score[:,i]
+        #print(iscore)
+        if len(score) >0 and len(labels) >0:
+            fpr, tpr, thresholds = metrics.roc_curve(labels, iscore, i)
+            # print(tpr)
+            # print(fpr)
+            # print(thresholds)
             auc_val = metrics.auc(fpr, tpr)
         else:
-            auc_val = "tpr or fpr is zero"
+            auc_val = "predicted has no entries"
         print('AUC score of', classes[i], ':', auc_val)
 
+def MAUCscore(score,labels,classes):
+    sumAuc=0
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            if(i!=j):
+                ijlabels=[x for x in labels if (x == i or x == j)]
+                ijscore=  [x[i] for x in score if (x == i or x == j)]
+                print(ijlabels , '\n', ijscore)
+                fpr,tpr,_ = metrics.roc_curve(ijlabels,ijscore)
+                sumAuc += metrics.auc(fpr,tpr)
+    avg=1/((classes)*(classes-1))
+    print("MAUC score:",avg)
 
 def get_mcc_by_class(matrix, classes):
     for i in range(len(classes)):
