@@ -33,7 +33,7 @@ while True:
             data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
             net = net_algorithms.get_net(params.net_type, len(classes))
             if torch.cuda.device_count() > 1:
-                net = nn.DataParallel(net)
+                net = torch.nn.DataParallel(net)
             if torch.cuda.is_available():
                 net.cuda()
             criterion = net_algorithms.get_criterion(params.criterion)
@@ -74,7 +74,7 @@ while True:
                 net.load_state_dict(torch.load(params.load_loc))
                 # net = torch.load(params.load_loc)
                 if torch.cuda.device_count() > 1:
-                    net = nn.DataParallel(net)
+                    net = torch.nn.DataParallel(net)
                 if torch.cuda.is_available():
                     net.cuda()
             else:
