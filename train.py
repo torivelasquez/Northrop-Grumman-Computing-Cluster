@@ -4,9 +4,11 @@
 import torch
 import numpy as np
 from torch.autograd import Variable
+from timeit import default_timer as timer
 
 
 def train(net, trainloader, optimizer, criterion, epochs):
+    start = timer()
     for epoch in range(epochs):  # loop over the dataset multiple times
 
         running_loss = 0.0
@@ -37,4 +39,5 @@ def train(net, trainloader, optimizer, criterion, epochs):
                 print('[%d, %5d] loss: %.3f' %
                       (epoch + 1, i + 1, running_loss / 20))
                 running_loss = 0.0
-    print('Finished Training')
+    end = timer()
+    print('Finished Training in', end - start, 'seconds')
