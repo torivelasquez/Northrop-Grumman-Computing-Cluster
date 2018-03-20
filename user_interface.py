@@ -45,6 +45,7 @@ while True:
             transform = transformations.get_transform(params.test_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
             confusion_matrix, predicted, labels, score = compute_confusion_matrix(data_set, net, classes)
+            print(confusion_matrix)
             get_accuracy(confusion_matrix, classes)
             get_accuracy_by_class(confusion_matrix, classes)
             #  get_mcc_by_class(confusion_matrix , classes)
@@ -73,12 +74,12 @@ while True:
                 transform = transformations.get_transform(params.test_transform)
                 _, classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
                 net = net_algorithms.get_net(params.net_type, len(classes))
-                net.load_state_dict(torch.load(params.load_loc))
-                # net = torch.load(params.load_loc)
                 if torch.cuda.device_count() > 1:
                     net = torch.nn.DataParallel(net)
                 if torch.cuda.is_available():
                     net.cuda()
+                net.load_state_dict(torch.load(params.load_loc))
+                # net = torch.load(params.load_loc)
             else:
                 print("neural net not found")
 

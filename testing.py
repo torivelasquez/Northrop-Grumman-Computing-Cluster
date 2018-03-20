@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 from sklearn import metrics
+from pandas_ml import ConfusionMatrix
 import torch.nn.functional as F
 
 def classify(img_name, net, transform, classes):
@@ -64,6 +65,8 @@ def compute_confusion_matrix(testloader, net, classes):
             ypred.append(predicted[i])
             yactual.append(labels[i])
             confusion_matrix[labels[i]][predicted[i]] += 1
+    cm = ConfusionMatrix(yactual, ypred)
+    print(cm.print_stats())
     print(confusion_matrix, confusion_matrix.sum())
     return confusion_matrix, ypred, yactual, yscore
 
