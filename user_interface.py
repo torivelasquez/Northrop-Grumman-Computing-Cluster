@@ -49,9 +49,9 @@ while True:
             get_accuracy(confusion_matrix, classes)
             get_accuracy_by_class(confusion_matrix, classes)
             #  get_mcc_by_class(confusion_matrix , classes)
-            #  roc_curve(score,labels,classes)
-            #  MAUCscore(predicted,labels,classes)
             auc_metric(score, labels, classes)
+            MAUCscore(score, labels, classes)
+            roc_curve(score, labels, classes)
 
     elif cmd_split[0] == "class":
         if len_test(cmd_split, 2):
