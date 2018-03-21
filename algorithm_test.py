@@ -42,7 +42,7 @@ def run_test():
     csv_header = csv_header + ',' + ','.join([s + " Accuracy" for s in test_classes]) + ',' + ','.join([s + " AUC" for s in test_classes]) + '\n'
     result_file.write(csv_header)
 
-    for net_number, net in enumerate(nets_to_run):
+    for net_number, net in enumerate(nets_to_run, 1):
         print("Running {0:d}/{1:d}: {2:s}".format(net_number, number_of_nets, net))
         net_statistics = [net]
 
