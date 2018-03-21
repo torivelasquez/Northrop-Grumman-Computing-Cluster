@@ -175,31 +175,6 @@ def MAUCscore(score, labels, classes):
     return avg
 
 
-def aucpair(i,j,score,labels):
-    ijlabels=[]
-    ijscore=[]
-    for k in range(len(score)):
-        if(labels[k]==i or labels[k]==j):
-            ijlabels.append(labels[k])
-            ijscore.append(score[k])
-    return ijlabels,ijscore
-
-
-def MAUCscore(score,labels,classes):
-    sumAuc=0
-    for i in range(len(classes)):
-        iscore = score[:, i]
-        for j in range(len(classes)):
-            if(i!=j):
-                ijlabels,ijscore=aucpair(i,j,iscore,labels)
-                #  print(ijlabels , '\n', ijscore)
-                fpr,tpr,_ = metrics.roc_curve(ijlabels,ijscore,pos_label=i)
-                print("pair auc:",i,j,"result:",metrics.auc(fpr,tpr))
-                sumAuc += metrics.auc(fpr,tpr)
-    avg=1/((len(classes))*(len(classes)-1))*sumAuc
-    print("MAUC score:",avg)
-
-
 def get_mcc_by_class(matrix, classes):
     class_mcc = []
     for i in range(len(classes)):

@@ -30,11 +30,10 @@ def run_test():
     # Get timestamp for file
     runtime = datetime.now().replace(microsecond=0).isoformat().replace(':', '-')
     result_file = open("./testresults/testresults_" + runtime + ".csv", 'a')
-    csv_header = "Neural Net Type,Training Time (s),MAUC Score,Overall Accuracy"
+    csv_header = "Neural Net Type,Epochs,Training Time (s),MAUC Score,Overall Accuracy"
 
     transform = transformations.get_transform(params.train_transform)
     training_set, training_classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
-    print(type(training_classes))
 
     transform = transformations.get_transform(params.test_transform)
     test_set, test_classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
@@ -44,7 +43,7 @@ def run_test():
 
     for net_number, net in enumerate(nets_to_run, 1):
         print("Running {0:d}/{1:d}: {2:s}".format(net_number, number_of_nets, net))
-        net_statistics = [net]
+        net_statistics = [net, params.epochs]
 
         # Train net
         model = net_algorithms.get_net(net, len(training_classes))
