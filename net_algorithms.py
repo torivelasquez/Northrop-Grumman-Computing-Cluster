@@ -18,7 +18,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 import torchvision.models as models
 alexnet = models.alexnet(pretrained=True)
-resnet=models.resnet18(pretrained=True)
+resnet = models.resnet18(pretrained=True)
 
 class BaseNet(nn.Module):
     def __init__(self, output_size):
@@ -68,7 +68,7 @@ class ResNet(nn.Module):
         self.classifier = nn.Sequential(
             # nn.Linear(1568, 256),
             # print(nn.Linear(512 * 9, output_size)),
-            nn.Linear(512* 7 * 7, output_size)
+            nn.Linear(512 * 7 * 7, output_size)
         )
 
     def forward(self, x):

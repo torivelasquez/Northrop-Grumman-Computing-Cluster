@@ -44,14 +44,14 @@ while True:
         if len_test(cmd_split, 1):
             transform = transformations.get_transform(params.test_transform)
             data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
-            confusion_matrix, predicted, labels, score = compute_confusion_matrix(data_set, net, classes)
+            confusion_matrix, statistics, predicted, labels, score = compute_confusion_matrix(data_set, net, classes)
             print(confusion_matrix)
             get_accuracy(confusion_matrix, classes)
             get_accuracy_by_class(confusion_matrix, classes)
             #  get_mcc_by_class(confusion_matrix , classes)
-            #  roc_curve(score,labels,classes)
-            #  MAUCscore(predicted,labels,classes)
             auc_metric(score, labels, classes)
+            MAUCscore(score, labels, classes)
+            roc_curve(score, labels, classes)
 
     elif cmd_split[0] == "class":
         if len_test(cmd_split, 2):

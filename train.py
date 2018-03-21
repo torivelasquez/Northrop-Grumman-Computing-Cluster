@@ -40,4 +40,7 @@ def train(net, trainloader, optimizer, criterion, epochs):
                       (epoch + 1, i + 1, running_loss / 20))
                 running_loss = 0.0
     end = timer()
-    print('Finished Training in', end - start, 'seconds')
+    training_time = end - start
+    print('Finished Training in', training_time, 'seconds')
+
+    return training_time
