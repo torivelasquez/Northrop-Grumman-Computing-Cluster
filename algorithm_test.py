@@ -58,7 +58,7 @@ def run_test():
         net_statistics.append(training_time)
 
         # Test net
-        confusion_matrix, statistics, predicted, labels, score = compute_confusion_matrix(test_set, model, test_classes)
+        confusion_matrix, predicted, labels, score = compute_confusion_matrix(test_set, model, test_classes)
         net_statistics.append(MAUCscore(score, labels, test_classes))
         net_statistics.append(str(get_accuracy(confusion_matrix, test_classes)) + '%')
         net_statistics = [*net_statistics, *[str(i) + '%' for i in get_accuracy_by_class(confusion_matrix, test_classes)]]

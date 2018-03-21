@@ -2,4 +2,5 @@
 .idea/
 images/
 cmtest.py
+testresults/
 __pycache__/

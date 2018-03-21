@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from PIL import Image
 from sklearn import metrics
 from torch.autograd import Variable
-from pandas_ml import ConfusionMatrix
+# from pandas_ml import ConfusionMatrix
 
 
 def classify(img_name, net, transform, classes):
@@ -74,13 +74,13 @@ def compute_confusion_matrix(testloader, net, classes):
             ypred.append(predicted[i])
             yactual.append(labels[i])
             confusion_matrix[labels[i]][predicted[i]] += 1
-    cm = ConfusionMatrix(yactual, ypred)
-    statistics = cm.stats()
-    overall_stats = list(statistics['overall'].items())
-    class_stats = statistics['class']
+    # cm = ConfusionMatrix(yactual, ypred)
+    # statistics = cm.stats()
+    # overall_stats = list(statistics['overall'].items())
+    # class_stats = statistics['class']
     print(confusion_matrix, confusion_matrix.sum())
 
-    return confusion_matrix, statistics, ypred, yactual, yscore
+    return confusion_matrix, ypred, yactual, yscore
 
 
 def multi_class_simplify_to_binary(matrix, classtype):
@@ -145,7 +145,6 @@ def auc_metric(score, labels, classes):
         auc_values.append(auc_val)
         print('AUC score of', classes[i], ':', auc_val)
 
-<<<<<<< HEAD
     return auc_values
 
 
@@ -175,7 +174,7 @@ def MAUCscore(score, labels, classes):
 
     return avg
 
-=======
+
 def aucpair(i,j,score,labels):
     ijlabels=[]
     ijscore=[]
@@ -199,7 +198,7 @@ def MAUCscore(score,labels,classes):
                 sumAuc += metrics.auc(fpr,tpr)
     avg=1/((len(classes))*(len(classes)-1))*sumAuc
     print("MAUC score:",avg)
->>>>>>> fd0522a95bfbe93b462a60dde9a357c74f206f12
+
 
 def get_mcc_by_class(matrix, classes):
     class_mcc = []
