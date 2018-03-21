@@ -48,7 +48,10 @@ class Parameters:
         self.load_loc = new_variable
 
     def set_epochs(self, new_variable):
-        self.epochs = int(new_variable)
+        if ' ' not in new_variable:
+            self.epochs = int(new_variable)
+        else:
+            self.epochs = new_variable
 
     def set_criterion(self, new_variable):
         self.criterion = new_variable
