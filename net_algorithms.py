@@ -159,12 +159,13 @@ def get_criterion(criterion_name):
     return criterion[criterion_name]()
 
 
-def sgd(net):
-    return optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+def sgd(net,lrate,moment):
+    # return optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+    return optim.SGD(net.parameters(), lr=lrate, momentum=moment)
 
 
 optimizers = {"sgd": sgd}
 
 
-def get_optimizer(optimizer_name, net):
-    return optimizers[optimizer_name](net)
+def get_optimizer(optimizer_name, net,lrate,moment):
+    return optimizers[optimizer_name](net,lrate,moment)

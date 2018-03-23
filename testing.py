@@ -167,7 +167,7 @@ def MAUCscore(score, labels, classes):
                 ijlabels, ijscore = aucpair(i, j, iscore, labels)
                 #  print(ijlabels , '\n', ijscore)
                 fpr, tpr, _ = metrics.roc_curve(ijlabels, ijscore, pos_label=i)
-                print("pair auc:", i, j, "result:", metrics.auc(fpr, tpr))
+                # print("pair auc:", i, j, "result:", metrics.auc(fpr, tpr))
                 sumAuc += metrics.auc(fpr, tpr)
     avg = 1/((len(classes))*(len(classes)-1))*sumAuc
     print("MAUC score:", avg)

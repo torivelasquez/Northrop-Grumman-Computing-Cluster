@@ -2,6 +2,7 @@
 
 import os.path
 
+
 class Parameters:
     def __init__(self):
         self.net_type = ["transfer"]
@@ -11,6 +12,9 @@ class Parameters:
         self.save_loc = ["classifier.pt"]
         self.load_loc = ["classifier.pt"]
         self.epochs = [1]
+        self.layers = [1]
+        self.momentum = [0.9]
+        self.learning_rate = [0.001]
         self.criterion = ["crossentropy"]
         self.optimizer = ["sgd"]
         self.train_transform = ["main"]
@@ -24,11 +28,19 @@ class Parameters:
                         "save_loc": self.set_save_loc,
                         "load_loc": self.set_load_loc,
                         "epochs": self.set_epochs,
+                        "layers": self.set_layers,
+                        "momentum": self.set_momentum,
+                        "learning_rate": self.set_learning_rate,
                         "criterion": self.set_criterion,
                         "optimizer": self.set_optimizer,
                         "train_transform": self.set_train_transform,
                         "test_transform": self.set_test_transform,
                         "grayscale": self.set_grayscale}
+
+    def list(self):
+        return [self.net_type, self.train_data_loc, self.test_data_loc, self.images_loc, self.save_loc,
+                     self.load_loc, self.epochs, self.layers, self.momentum, self.learning_rate, self.criterion,
+                     self.optimizer, self.train_transform, self.test_transform, self.grayscale]
 
     def set(self, param, new_variable):
         if param in self.set_map:
@@ -56,6 +68,15 @@ class Parameters:
 
     def set_epochs(self, new_variable):
         self.epochs = [int(var) for var in new_variable]
+
+    def set_layers(self, new_variable):
+        self.layers = [int(var) for var in new_variable]
+
+    def set_momentum(self, new_variable):
+        self.momentum = [float(var) for var in new_variable]
+
+    def set_learning_rate(self, new_variable):
+        self.learning_rate = [float(var) for var in new_variable]
 
     def set_criterion(self, new_variable):
         self.criterion = new_variable
@@ -99,6 +120,15 @@ class Parameters:
     def get_epochs(self):
         return self.epochs
 
+    def get_layers(self):
+        return self.layers
+
+    def get_momentum(self):
+        return self.momentum
+
+    def get_learning_rate(self):
+        return self.learning_rate
+
     def get_criterion(self):
         return self.criterion
 
@@ -127,3 +157,21 @@ class Parameters:
                             print("not formatted correctly: ", line)
         else:
             print("settings file not found")
+
+class TempParams:
+    def __init__(self, input):
+        self.net_type = [input[0]]
+        self.train_data_loc = [input[1]]
+        self.test_data_loc = [input[2]]
+        self.images_loc = [input[3]]
+        self.save_loc = [input[4]]
+        self.load_loc = [input[5]]
+        self.epochs = [input[6]]
+        self.layers = [input[7]]
+        self.momentum = [input[8]]
+        self.learning_rate = [input[9]]
+        self.criterion = [input[10]]
+        self.optimizer = [input[11]]
+        self.train_transform = [input[12]]
+        self.test_transform = [input[13]]
+        self.grayscale = [input[14]]
