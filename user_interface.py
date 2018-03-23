@@ -21,7 +21,7 @@ def len_test(cmd_split, num):
 
 params = runtime_parameters.Parameters()
 if len(sys.argv) == 2:
-    params.read_file(sys.argv[1])
+    params.set("file", sys.argv[1])
 while True:
     cmd = input(">>>")
     cmd_split = cmd.split()
@@ -29,21 +29,21 @@ while True:
         break
     elif cmd_split[0] == "train":
         if len_test(cmd_split, 1):
-            transform = transformations.get_transform(params.train_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
-            net = net_algorithms.get_net(params.net_type, len(classes))
+            transform = transformations.get_transform(params.train_transform[0])
+            data_set, classes = parser.get_data(transform, params.images_loc[0], params.train_data_loc[0], params.grayscale[0])
+            net = net_algorithms.get_net(params.net_type[0], len(classes))
             if torch.cuda.device_count() > 1:
                 net = torch.nn.DataParallel(net)
             if torch.cuda.is_available():
                 net.cuda()
-            criterion = net_algorithms.get_criterion(params.criterion)
-            optimizer = net_algorithms.get_optimizer(params.optimizer, net)
-            train(net, data_set, optimizer, criterion, params.epochs)
+            criterion = net_algorithms.get_criterion(params.criterion[0])
+            optimizer = net_algorithms.get_optimizer(params.optimizer[0], net)
+            train(net, data_set, optimizer, criterion, params.epochs[0])
 
     elif cmd_split[0] == "test":
         if len_test(cmd_split, 1):
-            transform = transformations.get_transform(params.test_transform)
-            data_set, classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
+            transform = transformations.get_transform(params.test_transform[0])
+            data_set, classes = parser.get_data(transform, params.images_loc[0], params.test_data_loc[0], params.grayscale[0])
             confusion_matrix, predicted, labels, score = compute_confusion_matrix(data_set, net, classes)
             print(confusion_matrix)
             get_accuracy(confusion_matrix, classes)
@@ -55,42 +55,37 @@ while True:
 
     elif cmd_split[0] == "class":
         if len_test(cmd_split, 2):
-            if os.path.isfile(params.images_loc + cmd_split[1]):
-                transform = transformations.get_transform(params.test_transform)
-                data_set, classes = parser.get_data(transform, params.images_loc, params.train_data_loc, params.grayscale)
-                classify(params.images_loc + cmd_split[1], net, transform, classes)
+            if os.path.isfile(params.images_loc[0] + cmd_split[1]):
+                transform = transformations.get_transform(params.test_transform[0])
+                data_set, classes = parser.get_data(transform, params.images_loc[0], params.train_data_loc[0], params.grayscale[0])
+                classify(params.images_loc[0] + cmd_split[1], net, transform, classes)
             else:
                 print("image not found")
 
     elif cmd_split[0] == "save":
         if len_test(cmd_split, 1):
-            torch.save(net.state_dict(), params.save_loc)
-            # torch.save(net, params.save_loc)
+            torch.save(net.state_dict(), params.save_loc[0])
+            # torch.save(net, params.save_loc[0])
 
     elif cmd_split[0] == "load":
         if len_test(cmd_split, 1):
-            file = params.load_loc
+            file = params.load_loc[0]
             if os.path.isfile(file):
-                transform = transformations.get_transform(params.test_transform)
-                _, classes = parser.get_data(transform, params.images_loc, params.test_data_loc, params.grayscale)
-                net = net_algorithms.get_net(params.net_type, len(classes))
+                transform = transformations.get_transform(params.test_transform[0])
+                _, classes = parser.get_data(transform, params.images_loc[0], params.test_data_loc[0], params.grayscale[0])
+                net = net_algorithms.get_net(params.net_type[0], len(classes))
                 if torch.cuda.device_count() > 1:
                     net = torch.nn.DataParallel(net)
                 if torch.cuda.is_available():
                     net.cuda()
-                net.load_state_dict(torch.load(params.load_loc))
-                # net = torch.load(params.load_loc)
+                net.load_state_dict(torch.load(params.load_loc[0]))
+                # net = torch.load(params.load_loc[0])
             else:
                 print("neural net not found")
 
     elif cmd_split[0] == 'set':
         if len_test(cmd_split, 3):
             params.set(cmd_split[1], cmd_split[2])
-
-    elif cmd_split[0] == "settings":
-        if len_test(cmd_split, 2):
-            file = cmd_split[1]
-            params.read_file(file)
 
     elif cmd_split[0] == "split":
         if len_test(cmd_split, 3):
