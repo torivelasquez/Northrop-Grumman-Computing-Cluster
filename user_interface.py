@@ -90,10 +90,7 @@ while True:
     elif cmd_split[0] == "settings":
         if len_test(cmd_split, 2):
             file = cmd_split[1]
-            if os.path.isfile(file):
-                params.read_file(file)
-            else:
-                print("settings file not found")
+            params.read_file(file)
 
     elif cmd_split[0] == "split":
         if len_test(cmd_split, 3):

@@ -1,5 +1,6 @@
 # this file contains a class that holds and manages updating of global paramaters
 
+import os.path
 
 class Parameters:
     def __init__(self):
@@ -106,10 +107,17 @@ class Parameters:
         return self.test_transform
 
     def read_file(self, file_name):
-        with open(file_name, "r") as file:
-            for line in file:
-                line = line.partition("#")[0]
-                line = line.rstrip()
-                line = line.partition(" = ")
-                if not line[2] == '':
-                    self.set(line[0], line[2])
+        if os.path.isfile(file_name):
+            with open(file_name, "r") as file:
+                print("Reading file: ", file_name)
+                for line in file:
+                    line = line.partition("#")[0]
+                    line = line.rstrip().lstrip()
+                    if not line == '':
+                        line_p = line.partition("=")
+                        if not line_p[2] == '' and line_p[2].count('=') == 0:
+                            self.set(line_p[0].lstrip().rstrip(), line_p[2].lstrip().rstrip())
+                        else:
+                            print("not formatted correctly: ", line)
+        else:
+            print("settings file not found")
