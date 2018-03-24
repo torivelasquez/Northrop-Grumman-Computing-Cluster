@@ -29,4 +29,7 @@ trans = {"main": transform2, "old": transformation}
 
 
 def get_transform(transform_name):
-    return trans[transform_name]()
+    if transform_name in trans:
+        return trans[transform_name]()
+    else:
+        raise Exception("{} is not a recognized transformation".format(transform_name))

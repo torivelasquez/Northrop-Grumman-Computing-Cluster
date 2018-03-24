@@ -145,7 +145,10 @@ nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": Gr
 
 
 def get_net(net_name, num_classes):
-    return nets[net_name](num_classes)
+    if net_name in nets:
+        return nets[net_name](num_classes)
+    else:
+        raise Exception("{} is not a recognized net structure".format(net_name))
 
 
 def cross_entropy():
@@ -156,7 +159,10 @@ criterion = {"crossentropy": cross_entropy}
 
 
 def get_criterion(criterion_name):
-    return criterion[criterion_name]()
+    if criterion_name in criterion:
+        return criterion[criterion_name]()
+    else:
+        raise Exception("{} is not a recognized criterion".format(criterion_name))
 
 
 def sgd(net,lrate,moment):
@@ -168,4 +174,7 @@ optimizers = {"sgd": sgd}
 
 
 def get_optimizer(optimizer_name, net,lrate,moment):
-    return optimizers[optimizer_name](net,lrate,moment)
+    if optimizer_name in optimizers:
+        return optimizers[optimizer_name](net,lrate,moment)
+    else:
+        raise Exception("{} is not a recognized criterion".format(optimizer_name))

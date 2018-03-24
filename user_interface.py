@@ -21,30 +21,36 @@ def len_test(cmd_split, num):
 
 
 def train_macro(params_t):
-    transform = transformations.get_transform(params_t.train_transform[0])
-    data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.train_data_loc[0], params_t.grayscale[0])
-    net_t = net_algorithms.get_net(params_t.net_type[0], len(classes))
-    if torch.cuda.device_count() > 1:
-        net_t = torch.nn.DataParallel(net_t)
-    if torch.cuda.is_available():
-        net_t.cuda()
-    criterion = net_algorithms.get_criterion(params_t.criterion[0])
-    optimizer = net_algorithms.get_optimizer(params_t.optimizer[0], net_t, params_t.learning_rate[0], params_t.momentum[0])
-    train(net_t, data_set, optimizer, criterion, params_t.epochs[0])
-    return net_t
+    try:
+        transform = transformations.get_transform(params_t.train_transform[0])
+        data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.train_data_loc[0], params_t.grayscale[0])
+        net_t = net_algorithms.get_net(params_t.net_type[0], len(classes))
+        if torch.cuda.device_count() > 1:
+            net_t = torch.nn.DataParallel(net_t)
+        if torch.cuda.is_available():
+            net_t.cuda()
+        criterion = net_algorithms.get_criterion(params_t.criterion[0])
+        optimizer = net_algorithms.get_optimizer(params_t.optimizer[0], net_t, params_t.learning_rate[0], params_t.momentum[0])
+        train(net_t, data_set, optimizer, criterion, params_t.epochs[0])
+        return net_t
+    except Exception as e:
+        print("Error: ", e)
 
 
 def test_macro(net_t, params_t):
-    transform = transformations.get_transform(params_t.test_transform[0])
-    data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.test_data_loc[0], params_t.grayscale[0])
-    confusion_matrix, predicted, labels, score = compute_confusion_matrix(data_set, net_t, classes)
-    print(confusion_matrix)
-    get_accuracy(confusion_matrix, classes)
-    get_accuracy_by_class(confusion_matrix, classes)
-    #  get_mcc_by_class(confusion_matrix , classes)
-    auc_metric(score, labels, classes)
-    MAUCscore(score, labels, classes)
-    roc_curve(score, labels, classes)
+    try:
+        transform = transformations.get_transform(params_t.test_transform[0])
+        data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.test_data_loc[0], params_t.grayscale[0])
+        confusion_matrix, predicted, labels, score = compute_confusion_matrix(data_set, net_t, classes)
+        print(confusion_matrix)
+        get_accuracy(confusion_matrix, classes)
+        get_accuracy_by_class(confusion_matrix, classes)
+        #  get_mcc_by_class(confusion_matrix , classes)
+        auc_metric(score, labels, classes)
+        MAUCscore(score, labels, classes)
+        roc_curve(score, labels, classes)
+    except Exception as e:
+        print("Error: ", e)
 
 
 params = runtime_parameters.Parameters()
@@ -71,13 +77,15 @@ while True:
                 net_t2 = train_macro(runtime_parameters.TempParams(param_list))
                 test_macro(net_t2, runtime_parameters.TempParams(param_list))
 
-
     elif cmd_split[0] == "class":
         if len_test(cmd_split, 2):
             if os.path.isfile(params.images_loc[0] + cmd_split[1]):
-                transform = transformations.get_transform(params.test_transform[0])
-                data_set, classes = parser.get_data(transform, params.images_loc[0], params.train_data_loc[0], params.grayscale[0])
-                classify(params.images_loc[0] + cmd_split[1], net, transform, classes)
+                try:
+                    transform = transformations.get_transform(params.test_transform[0])
+                    data_set, classes = parser.get_data(transform, params.images_loc[0], params.train_data_loc[0], params.grayscale[0])
+                    classify(params.images_loc[0] + cmd_split[1], net, transform, classes)
+                except Exception as e:
+                    print("Error: ", e)
             else:
                 print("image not found")
 
