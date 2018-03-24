@@ -24,7 +24,7 @@ class CarDataset(Dataset):
                 if not row[1] in self.classes:
                     self.classes.append(row[1])
                 self.car_list.append(car.Car(self.classes.index(row[1]), row[2],
-                                             (int(row[4]), int(row[5]), int(row[6]), int(row[7]))))
+                                             (int(row[3]), int(row[4]), int(row[5]), int(row[6]))))
         self.root_dir = root_dir
         self.transform = transform
 

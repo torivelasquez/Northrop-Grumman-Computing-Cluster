@@ -6,8 +6,8 @@ import os.path
 class Parameters:
     def __init__(self):
         self.net_type = ["transfer"]
-        self.train_data_loc = ["parser/cartrainingsetmini.csv"]
-        self.test_data_loc = ["parser/cartrainingsetmini.csv"]
+        self.train_data_loc = ["parser/carsetmini.csv"]
+        self.test_data_loc = ["parser/carsetmini.csv"]
         self.images_loc = ["images/"]
         self.save_loc = ["classifier.pt"]
         self.load_loc = ["classifier.pt"]
