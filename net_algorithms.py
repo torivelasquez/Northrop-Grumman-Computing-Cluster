@@ -90,12 +90,12 @@ class LayeredResNet(nn.Module):
         self.features = nn.Sequential(*list(resnet.children())[:-1])
         self.layers = params_t.get_layers()
         self.layersequence=[]
-        self.make_layers()
+        self.make_layers(['R','D',512*7*7,output_size])   # needs to be passed from config file (also there could be a problem with an invalid sequence like [512,'M',10])
         print(runtime_parameters.Parameters().list())
         self.classifier = nn.Sequential(
             *self.layersequence,
             # [[nn.ReLU(inplace=True) for i in range(layers[j])] for j in range(len(layers))],
-            nn.Linear(512 * 7 * 7, output_size)
+            #nn.Linear(512 * 7 * 7, output_size)
         )
         print(self.classifier)
         # self._initialize_weights()
@@ -106,9 +106,18 @@ class LayeredResNet(nn.Module):
         y = self.classifier(f)
         return y
 
-    def make_layers(self):
-        for i in range(self.layers[0]):
-            self.layersequence+=[nn.ReLU(inplace=True)] #,nn.Linear(512*7*7,512*7*7)]
+    def make_layers(self,seq):
+        for i in range(len(seq)-1):
+            if type(seq[i]) == int and type(seq[i+1]) == int:
+                self.layersequence +=[nn.Linear(seq[i],seq[i+1])]
+            elif seq[i] == 'D':
+                self.layersequence +=[nn.Dropout()]
+            elif seq[i] == 'R':
+                self.layersequence +=[nn.ReLU(inplace=True)]
+
+
+        # for i in range(self.layers[0]):
+        #    self.layersequence+=[nn.ReLU(inplace=True)] #,nn.Linear(512*7*7,512*7*7)]
 
 
 
