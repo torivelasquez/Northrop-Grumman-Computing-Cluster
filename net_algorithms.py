@@ -85,19 +85,18 @@ class ResNet(nn.Module):
 
 
 class LayeredResNet(nn.Module):
-    def __init__(self,output_size,params_t):
+    def __init__(self, output_size, params_t):
         super(LayeredResNet, self).__init__()
         self.features = nn.Sequential(*list(resnet.children())[:-1])
-        self.layers = params_t.get_layers()
-        self.layersequence=[]
-        self.make_layers(['R','D',512*7*7,output_size])   # needs to be passed from config file (also there could be a problem with an invalid sequence like [512,'M',10])
-        print(runtime_parameters.Parameters().list())
+        self.layers = params_t
+        self.layer_sequence = []
+        previous_width = self.make_layers(params_t, 512*7*7)   # needs to be passed from config file (also there could be a problem with an invalid sequence like [512,'M',10])
+        self.layer_sequence += [nn.Linear(previous_width, output_size)]
         self.classifier = nn.Sequential(
-            *self.layersequence,
+            *self.layer_sequence,
             # [[nn.ReLU(inplace=True) for i in range(layers[j])] for j in range(len(layers))],
             #nn.Linear(512 * 7 * 7, output_size)
         )
-        print(self.classifier)
         # self._initialize_weights()
 
     def forward(self, x):
@@ -106,14 +105,17 @@ class LayeredResNet(nn.Module):
         y = self.classifier(f)
         return y
 
-    def make_layers(self,seq):
+    def make_layers(self, seq, previous_width_):
+        previous_width = previous_width_
         for i in range(len(seq)-1):
-            if type(seq[i]) == int and type(seq[i+1]) == int:
-                self.layersequence +=[nn.Linear(seq[i],seq[i+1])]
+            if type(seq[i]) == int:
+                self.layer_sequence += [nn.Linear(previous_width, seq[i])]
+                previous_width = seq[i]
             elif seq[i] == 'D':
-                self.layersequence +=[nn.Dropout()]
+                self.layer_sequence +=[nn.Dropout()]
             elif seq[i] == 'R':
-                self.layersequence +=[nn.ReLU(inplace=True)]
+                self.layer_sequence +=[nn.ReLU(inplace=True)]
+        return previous_width
 
 
         # for i in range(self.layers[0]):
@@ -228,9 +230,9 @@ class MinimalNet(nn.Module):
 nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet, "layeredresnet": LayeredResNet}
 
 
-def get_net(net_name, num_classes,params_t):
+def get_net(net_name, num_classes, params_t):
     if net_name in nets:
-        return nets[net_name](num_classes,params_t)
+        return nets[net_name](num_classes, params_t)
     else:
         raise Exception("{} is not a recognized net structure".format(net_name))
 

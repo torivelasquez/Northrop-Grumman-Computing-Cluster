@@ -69,8 +69,18 @@ class Parameters:
     def set_epochs(self, new_variable):
         self.epochs = [int(var) for var in new_variable]
 
+    def to_int_if_int(self, string):
+        try:
+            return int(string)
+        except ValueError:
+            return string
+
     def set_layers(self, new_variable):
-        self.layers = [int(var) for var in new_variable]
+        self.layers = []
+        for var in new_variable:
+            new_var = []
+            new_var += [self.to_int_if_int(layer) for layer in var.split(',')]
+            self.layers.append(new_var)
 
     def set_momentum(self, new_variable):
         self.momentum = [float(var) for var in new_variable]
