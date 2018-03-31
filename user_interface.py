@@ -24,7 +24,7 @@ def train_macro(params_t):
     try:
         transform = transformations.get_transform(params_t.train_transform[0])
         data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.train_data_loc[0], params_t.grayscale[0])
-        net_t = net_algorithms.get_net(params_t.net_type[0], len(classes),params_t)
+        net_t = net_algorithms.get_net(params_t.net_type[0], len(classes),params_t.layers[0])
         if torch.cuda.device_count() > 1:
             net_t = torch.nn.DataParallel(net_t)
         if torch.cuda.is_available():
