@@ -20,6 +20,8 @@ class Parameters:
         self.train_transform = ["main"]
         self.test_transform = ["main"]
         self.grayscale = [False]
+        self.record = [False]
+        self.record_location = ["results.csv"]
         self.set_map = {"file": self.read_file,
                         "net_type": self.set_net_type,
                         "train_data_loc": self.set_train_data_loc,
@@ -35,12 +37,15 @@ class Parameters:
                         "optimizer": self.set_optimizer,
                         "train_transform": self.set_train_transform,
                         "test_transform": self.set_test_transform,
-                        "grayscale": self.set_grayscale}
+                        "grayscale": self.set_grayscale,
+                        "record": self.set_record,
+                        "record_location": self.set_record_location}
 
     def list(self):
         return [self.net_type, self.train_data_loc, self.test_data_loc, self.images_loc, self.save_loc,
-                     self.load_loc, self.epochs, self.layers, self.momentum, self.learning_rate, self.criterion,
-                     self.optimizer, self.train_transform, self.test_transform, self.grayscale]
+                self.load_loc, self.epochs, self.layers, self.momentum, self.learning_rate, self.criterion,
+                self.optimizer, self.train_transform, self.test_transform, self.grayscale, self.record,
+                self.record_location]
 
     def set(self, param, new_variable):
         if param in self.set_map:
@@ -108,6 +113,12 @@ class Parameters:
 
     def set_grayscale(self, new_variable):
         self.grayscale = [self.string_to_bool(val) for val in new_variable]
+
+    def set_record(self, new_variable):
+        self.record = [self.string_to_bool(val) for val in new_variable]
+
+    def set_record_location(self, new_variable):
+        self.record_location = new_variable
 
     def get_net_type(self):
         return self.net_type
@@ -185,3 +196,5 @@ class TempParams:
         self.train_transform = [input[12]]
         self.test_transform = [input[13]]
         self.grayscale = [input[14]]
+        self.record = [input[15]]
+        self.record_location = [input[16]]

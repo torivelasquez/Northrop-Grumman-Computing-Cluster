@@ -2,6 +2,7 @@
 
 import sys
 import os.path
+import datetime
 import runtime_parameters
 import net_algorithms
 import parser.parser as parser
@@ -43,12 +44,16 @@ def test_macro(net_t, params_t):
         data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.test_data_loc[0], params_t.grayscale[0])
         confusion_matrix, predicted, labels, score = compute_confusion_matrix(data_set, net_t, classes)
         print(confusion_matrix)
-        get_accuracy(confusion_matrix, classes)
+        acc = get_accuracy(confusion_matrix, classes)
         get_accuracy_by_class(confusion_matrix, classes)
         #  get_mcc_by_class(confusion_matrix , classes)
         auc_metric(score, labels, classes)
         MAUCscore(score, labels, classes)
         roc_curve(score, labels, classes)
+        if params_t.record[0]:
+            with open(params_t.record_location[0], 'a') as output:
+                output.write(str(datetime.datetime.now()) + ", " + str(acc) + "\n")
+                output.close()
     except Exception as e:
         print("Error: ", e)
 
