@@ -3,6 +3,8 @@
 #   BaseNet: pytroch tutorials convnet
 #   Net : poor experiment of making a convnet
 #   TransferNet: takes an Alexnet base from the ImageNet contest and performs fine tunning for the specific problem
+#   ResNet: Takes a pretrained Resnet18 base and performs fine tuning after adding additional layers
+#   LayeredResNet: same as Resnet but has abstracted the additional layers
 #   optimizer(): performs stochastic gradient decent along the vector space of images
 #
 #   function descriptions:
@@ -11,19 +13,15 @@
 #       nn.relu is an activator function max(0,x) where x is the tensor.
 #       nnleaky_relu is an activator function
 #       nn.Linear(a,b) linear tensor transformation from a dimension to b dimension
-#
-#
-import math
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import torchvision.models as models
-import runtime_parameters
 alexnet = models.alexnet(pretrained=True)
 resnet = models.resnet18(pretrained=True)
 
 class BaseNet(nn.Module):
-    def __init__(self, output_size,params_t):
+    def __init__(self, output_size,layer_param):
         super(BaseNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
@@ -43,7 +41,7 @@ class BaseNet(nn.Module):
 
 
 class TransferNet(nn.Module):
-    def __init__(self, output_size,params_t):
+    def __init__(self, output_size,layer_param):
         super(TransferNet, self).__init__()
         self.features = alexnet.features
         self.classifier = nn.Sequential(
@@ -64,12 +62,10 @@ class TransferNet(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self,output_size,params_t):
+    def __init__(self,output_size,layer_param):
         super(ResNet, self).__init__()
         self.features = nn.Sequential(*list(resnet.children())[:-1])
         self.classifier = nn.Sequential(
-            # nn.Linear(1568, 256),
-            # print(nn.Linear(512 * 9, output_size)),
             nn.Linear(512 * 7 * 7, output_size)
         )
 
@@ -80,24 +76,17 @@ class ResNet(nn.Module):
         return y
 
 
-# params = runtime_parameters.Parameters()
-#layers = runtime_parameters.Parameters().get_layers()
-
-
 class LayeredResNet(nn.Module):
-    def __init__(self, output_size, params_t):
+    def __init__(self, output_size, layer_param):
         super(LayeredResNet, self).__init__()
         self.features = nn.Sequential(*list(resnet.children())[:-1])
-        self.layers = params_t
+        self.layers = layer_param
         self.layer_sequence = []
-        previous_width = self.make_layers(params_t, 512*7*7)   # needs to be passed from config file (also there could be a problem with an invalid sequence like [512,'M',10])
+        previous_width = self.make_layers(layer_param, 512*7*7)
         self.layer_sequence += [nn.Linear(previous_width, output_size)]
         self.classifier = nn.Sequential(
-            *self.layer_sequence,
-            # [[nn.ReLU(inplace=True) for i in range(layers[j])] for j in range(len(layers))],
-            #nn.Linear(512 * 7 * 7, output_size)
+            *self.layer_sequence
         )
-        # self._initialize_weights()
 
     def forward(self, x):
         f = self.features(x)
@@ -117,58 +106,8 @@ class LayeredResNet(nn.Module):
                 self.layer_sequence +=[nn.ReLU(inplace=True)]
         return previous_width
 
-
-        # for i in range(self.layers[0]):
-        #    self.layersequence+=[nn.ReLU(inplace=True)] #,nn.Linear(512*7*7,512*7*7)]
-
-
-
-    #  def _initialize_weights(self):
-    #     for m in self.modules():
-    #         if isinstance(m, nn.Conv2d):
-    #             n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-    #             m.weight.data.normal_(0, math.sqrt(2. / n))
-    #             if m.bias is not None:
-    #                 m.bias.data.zero_()
-    #         elif isinstance(m, nn.BatchNorm2d):
-    #             m.weight.data.fill_(1)
-    #             m.bias.data.zero_()
-    #         elif isinstance(m, nn.Linear):
-    #             n = m.weight.size(1)
-    #             m.weight.data.normal_(0, 0.01)
-    #             m.bias.data.zero_()
-
-
-# def added_layers(cfg,batch_norm=False):
-#     layers = []
-#     in_channels = 3
-#     for v in cfg:
-#         if v == 'M':
-#             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
-#         else:
-#             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
-#             if batch_norm:
-#                 layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
-#             else:
-#                 layers += [conv2d, nn.ReLU(inplace=True)]
-#             in_channels = v
-#     return nn.Sequential(*layers)
-#
-# cfg = {
-#     'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-#     'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-#     'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 'M'],
-#     'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
-# }
-#
-# def new_Resnet():
-#     model = LayeredResNet(added_layers(cfg['A']))
-#     return model
-
-
-
 class Net(nn.Module):
-    def __init__(self, output_size,params_t):
+    def __init__(self, output_size,layer_param):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
@@ -192,7 +131,7 @@ class Net(nn.Module):
 
 
 class GrayNet(nn.Module):
-    def __init__(self, output_size,params_t):
+    def __init__(self, output_size,layer_param):
         super(GrayNet, self).__init__()
         self.conv1 = nn.Conv2d(1, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
@@ -252,7 +191,6 @@ def get_criterion(criterion_name):
 
 
 def sgd(net,lrate,moment):
-    # return optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
     return optim.SGD(net.parameters(), lr=lrate, momentum=moment)
 
 

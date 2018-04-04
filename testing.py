@@ -130,15 +130,10 @@ def mcc_score(binary_matrix):
 
 def auc_metric(score, labels, classes):
     auc_values = []
-    #print(score)
     for i in range(len(classes)):
         iscore = score[:,i]
-        #print(iscore)
         if len(score) > 0 and len(labels) > 0:
             fpr, tpr, thresholds = metrics.roc_curve(labels, iscore, i)
-            # print(tpr)
-            # print(fpr)
-            # print(thresholds)
             auc_val = metrics.auc(fpr, tpr)
         else:
             auc_val = "predicted has no entries"
@@ -165,13 +160,10 @@ def MAUCscore(score, labels, classes):
         for j in range(len(classes)):
             if(i != j):
                 ijlabels, ijscore = aucpair(i, j, iscore, labels)
-                #  print(ijlabels , '\n', ijscore)
                 fpr, tpr, _ = metrics.roc_curve(ijlabels, ijscore, pos_label=i)
-                # print("pair auc:", i, j, "result:", metrics.auc(fpr, tpr))
                 sumAuc += metrics.auc(fpr, tpr)
     avg = 1/((len(classes))*(len(classes)-1))*sumAuc
     print("MAUC score:", avg)
-
     return avg
 
 
