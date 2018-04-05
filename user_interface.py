@@ -1,6 +1,7 @@
 # this file contains the interface which serves as the driver for the rest of the software
 
 import sys
+import csv
 import os.path
 import datetime
 import runtime_parameters
@@ -42,25 +43,56 @@ def test_macro(net_t, params_t):
     try:
         transform = transformations.get_transform(params_t.test_transform[0])
         data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.test_data_loc[0], params_t.grayscale[0])
-        confusion_matrix, labels, score = compute_confusion_matrix(data_set, net_t, classes)
-        print(confusion_matrix)
+        confusion_matrix, statistics, labels, score = compute_confusion_matrix(data_set, net_t, classes)
         acc = get_accuracy(confusion_matrix, classes)
-        acclist=get_accuracy_by_class(confusion_matrix, classes)
-        auc_values=auc_metric(score, labels, classes)
-        mauc=MAUCscore(score, labels, classes)
-        confidence_interval=auc_confidence_interval(score, labels, classes)
+        acclist = get_accuracy_by_class(confusion_matrix, classes)
+        auc_values = auc_metric(score, labels, classes)
+        mauc = MAUCscore(score, labels, classes)
+        confidence_interval = auc_confidence_interval(score, labels, classes)
         roc_curve(score, labels, classes)
+        overall_stats = list(statistics['overall'].items())
+        overall_stats = [tup for tup in overall_stats if tup[1] != "ToDo"]
+        keys, values = map(list, zip(*overall_stats))
+        class_stats = statistics['class']
         print(params_t.record[0])
+
         if params_t.record[0]:
-            with open(params_t.record_location[0], 'a') as output:
-                output.write(str(datetime.datetime.now())+"\n")
-                output.write("inputs: \n" )
-                output.write(str(params_t.list()) + "\n")
-                output.write("Results:\n")
-                output.write("Accuracy:" +str(acc) + "\n")
-                output.write("MAUC:" + str(mauc)+ "\n")
-                output.write(str(confusion_matrix) + "\n")
-                output.close()
+            file_exists = os.path.isfile(params_t.record_location[0])
+            result_file = open(params_t.record_location[0], 'a')
+            writer = csv.writer(result_file, delimiter=',')
+
+            if not file_exists:
+                csv_header = ["Timestamp", "Net Type", "Train Data Location",
+                              "Test Data Location", "Images Location", "Save Location",
+                              "Load Location", "Epochs", "Layers", "Momentum", "Learning Rate",
+                              "Criterion", "Optimizer", "Train Transform", "Test Transform",
+                              "Grayscale", "Overall Accuracy", "MAUC Score"]
+
+                class_acc_list = [s + " Accuracy" for s in classes]
+                class_auc_list = [s + " AUC Score" for s in classes]
+                class_stat_indicies = [' '.join(s) for s in itertools.product(classes, list(class_stats.index))]
+                csv_header = csv_header + class_acc_list + class_auc_list + keys[1:] + class_stat_indicies + ["Confusion Matrix", '\n']
+                writer.writerow(csv_header)
+
+            output = []
+
+            # Add timestamp to output
+            runtime = datetime.datetime.now().replace(microsecond=0).isoformat()
+            output.append(runtime)
+
+            # Add net parameters to outputs
+            output += [i[0] if len(i) == 1 else i for i in params_t.list()][:-2]
+
+            # Add test results and metrics to output
+            output.extend((str(acc), str(mauc)))
+            output += list(map(str, acclist)) + list(map(str, auc_values))
+            output += values[1:]
+            output += [str(i) for sub in class_stats.values.tolist() for i in sub]
+            output += confusion_matrix.tolist()
+            output.append('\n')
+
+            writer.writerow(output)
+            result_file.close()
     except Exception as e:
         print("Error: ", e)
 

@@ -12,13 +12,14 @@
 
 import torch
 import math
+import warnings
 import numpy as np
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 from PIL import Image
 from sklearn import metrics
 from torch.autograd import Variable
-# from pandas_ml import ConfusionMatrix
+from pandas_ml import ConfusionMatrix
 
 
 def classify(img_name, net, transform, classes):
@@ -78,13 +79,13 @@ def compute_confusion_matrix(testloader, net, classes):
             ypred.append(predicted[i])
             yactual.append(labels[i])
             confusion_matrix[labels[i]][predicted[i]] += 1
-    # cm = ConfusionMatrix(yactual, ypred)
-    # statistics = cm.stats()
-    # overall_stats = list(statistics['overall'].items())
-    # class_stats = statistics['class']
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        cm = ConfusionMatrix(yactual, ypred)
+        statistics = cm.stats()
     print(confusion_matrix, confusion_matrix.sum())
 
-    return confusion_matrix, yactual, yscore
+    return confusion_matrix, statistics, yactual, yscore
 
 
 def multi_class_simplify_to_binary(matrix, classtype):
