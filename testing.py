@@ -2,7 +2,11 @@
 # functions:
 # 	getaccuracy(): compares prediction to the actual label in test data set
 # 	getaccuracybyclass(): compares prediction to the actual label for every class
-#   getconfusionmatrix(): creates a confusion matrix for classification
+#   compute_confusion_matrix(): creates a confusion matrix for classification and s
+#       -returns
+#       -confusion matrix
+#       -probabilities of each class being classified
+#       -true labels of classification
 #   multiclass_simplify_to_binary(): for a specific class simplifies the matrix to a two by two matrix based on one vs all manner.
 #   computeMAUCScore(): takes each pairwise AUC and takes the average to make a MAUC metric
 
@@ -80,7 +84,7 @@ def compute_confusion_matrix(testloader, net, classes):
     # class_stats = statistics['class']
     print(confusion_matrix, confusion_matrix.sum())
 
-    return confusion_matrix, ypred, yactual, yscore
+    return confusion_matrix, yactual, yscore
 
 
 def multi_class_simplify_to_binary(matrix, classtype):
@@ -100,9 +104,19 @@ def multi_class_simplify_to_binary(matrix, classtype):
     return binary_matrix
 
 
+def multi_class_labels_to_binary(labels,pos_class):
+    binarylabels=[]
+    for i in range(len(labels)):
+        if(labels[i]==pos_class):
+            binarylabels.append(1)
+        else:
+            binarylabels.append(0)
+    return binarylabels
+
+
 def roc_curve(score, labels, classes):
     for i in range(len(classes)):
-        iscore = score[:, i]
+        iscore = score[:, i] # probabilities of the positive class
         fpr, tpr, _ = metrics.roc_curve(labels, iscore, i)
         plt.figure()
         plt.plot(fpr, tpr)
@@ -141,6 +155,34 @@ def auc_metric(score, labels, classes):
         print('AUC score of', classes[i], ':', auc_val)
 
     return auc_values
+
+
+def auc_confidence_interval(score,labels,classes):
+    confidence_intervals=[]
+    for k in range(len(classes)):
+        nplabels=np.array(multi_class_labels_to_binary(labels,k))
+        iscore = np.array(score[:, k])
+        n_bootstraps = 1000
+        rng_seed = 42  # control reproducibility
+        bootstrapped_scores = []
+
+        rng = np.random.RandomState(rng_seed)
+        for i in range(n_bootstraps):
+            # bootstrap by sampling with replacement on the prediction indices
+            indices = rng.random_integers(0, len(iscore) - 1, len(iscore))
+            if len(np.unique(nplabels[indices])) < 2:
+                # We need at least one positive and one negative sample for ROC AUC
+                # to be defined: reject the sample
+                continue
+            a_score = metrics.roc_auc_score(nplabels[indices], iscore[indices])
+            bootstrapped_scores.append(a_score)
+        sorted_scores = np.array(bootstrapped_scores)
+        sorted_scores.sort()
+        confidence_lower = sorted_scores[int(0.05 * len(sorted_scores))]
+        confidence_upper = sorted_scores[int(0.95 * len(sorted_scores))]
+        print(" 95% Confidence interval for the class{:s} : [{:0.3f} - {:0.3}]".format(" "+classes[k],confidence_lower, confidence_upper))
+        confidence_intervals.append([confidence_lower,confidence_upper])
+    return confidence_intervals
 
 
 def aucpair(i, j, score, labels):

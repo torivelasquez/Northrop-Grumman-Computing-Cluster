@@ -9,7 +9,7 @@ import parser.parser as parser
 import transformations
 import itertools
 from data_spliter import data_spliter
-from testing import MAUCscore, auc_metric, roc_curve, get_accuracy, get_accuracy_by_class, classify, compute_confusion_matrix, mcc_score, multi_class_simplify_to_binary, get_mcc_by_class
+from testing import auc_confidence_interval,MAUCscore, auc_metric, roc_curve, get_accuracy, get_accuracy_by_class, classify, compute_confusion_matrix, mcc_score, multi_class_simplify_to_binary, get_mcc_by_class
 from train import train
 import torch
 
@@ -42,12 +42,13 @@ def test_macro(net_t, params_t):
     try:
         transform = transformations.get_transform(params_t.test_transform[0])
         data_set, classes = parser.get_data(transform, params_t.images_loc[0], params_t.test_data_loc[0], params_t.grayscale[0])
-        confusion_matrix, predicted, labels, score = compute_confusion_matrix(data_set, net_t, classes)
+        confusion_matrix, labels, score = compute_confusion_matrix(data_set, net_t, classes)
         print(confusion_matrix)
         acc = get_accuracy(confusion_matrix, classes)
         acclist=get_accuracy_by_class(confusion_matrix, classes)
-        auc_metric(score, labels, classes)
+        auc_values=auc_metric(score, labels, classes)
         mauc=MAUCscore(score, labels, classes)
+        confidence_interval=auc_confidence_interval(score, labels, classes)
         roc_curve(score, labels, classes)
         print(params_t.record[0])
         if params_t.record[0]:
