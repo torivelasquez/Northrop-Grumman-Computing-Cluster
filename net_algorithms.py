@@ -169,9 +169,9 @@ class MinimalNet(nn.Module):
 nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet, "layeredresnet": LayeredResNet}
 
 
-def get_net(net_name, num_classes, params_t):
+def get_net(net_name, num_classes,layer_param):
     if net_name in nets:
-        return nets[net_name](num_classes, params_t)
+        return nets[net_name](num_classes,layer_param)
     else:
         raise Exception("{} is not a recognized net structure".format(net_name))
 

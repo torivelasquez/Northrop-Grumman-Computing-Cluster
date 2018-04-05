@@ -111,7 +111,7 @@ while True:
             if os.path.isfile(file):
                 transform = transformations.get_transform(params.test_transform[0])
                 _, classes = parser.get_data(transform, params.images_loc[0], params.test_data_loc[0], params.grayscale[0])
-                net = net_algorithms.get_net(params.net_type[0], len(classes))
+                net = net_algorithms.get_net(params.net_type[0], len(classes),params.layers[0])
                 if torch.cuda.device_count() > 1:
                     net = torch.nn.DataParallel(net)
                 if torch.cuda.is_available():
@@ -146,6 +146,10 @@ while True:
                     print("unidentified error")
             else:
                 print("csv source not found")
+
+    elif cmd_split[0] == "view":
+        for i in range(len(params.list())):
+            print(params.list()[i])
 
     elif cmd_split[0] == "help":
         if len_test(cmd_split, 1):
