@@ -61,6 +61,37 @@ class TransferNet(nn.Module):
         return y
 
 
+class LayerdAlexNet(nn.Module):
+    def __init__(self, output_size,layer_param):
+        super(TransferNet, self).__init__()
+        self.features = alexnet.features
+        self.layers = layer_param
+        self.layer_sequence = []
+        previous_width = self.make_layers(layer_param, 256*11*11)
+        self.layer_sequence += [nn.Linear(previous_width, output_size)]
+        self.classifier = nn.Sequential(
+            *self.layer_sequence
+        )
+
+    def forward(self, x):
+        f = self.features(x)
+        f = f.view(f.size(0), 256*11*11)
+        y = self.classifier(f)
+        return y
+
+    def make_layers(self, seq, previous_width_):
+        previous_width = previous_width_
+        for i in range(len(seq)-1):
+            if type(seq[i]) == int:
+                self.layer_sequence += [nn.Linear(previous_width, seq[i])]
+                previous_width = seq[i]
+            elif seq[i] == 'D':
+                self.layer_sequence +=[nn.Dropout()]
+            elif seq[i] == 'R':
+                self.layer_sequence +=[nn.ReLU(inplace=True)]
+        return previous_width
+
+
 class ResNet(nn.Module):
     def __init__(self,output_size,layer_param):
         super(ResNet, self).__init__()
@@ -166,7 +197,7 @@ class MinimalNet(nn.Module):
         return x
 
 
-nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet, "layeredresnet": LayeredResNet}
+nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet, "layeredresnet": LayeredResNet, "layeredalexnet": LayerdAlexNet}
 
 
 def get_net(net_name, num_classes,layer_param):
