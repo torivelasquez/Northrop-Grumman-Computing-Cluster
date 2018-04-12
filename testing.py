@@ -129,7 +129,7 @@ def roc_curve(score, labels, classes):
         plt.xlabel('FPR (1 - Specificity)')
         plt.ylabel('TPR (Sensitivity)')
         plt.grid(True)
-        plt.show()
+        plt.savefig(classes[i]+'.png')
 
 
 def mcc_score(binary_matrix):

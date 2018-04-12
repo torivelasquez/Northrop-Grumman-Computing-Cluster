@@ -4,3 +4,4 @@ images/
 cmtest.py
 testresults/
 __pycache__/
+*.png
