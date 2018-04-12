@@ -61,9 +61,9 @@ class TransferNet(nn.Module):
         return y
 
 
-class LayerdAlexNet(nn.Module):
+class LayeredAlexNet(nn.Module):
     def __init__(self, output_size,layer_param):
-        super(TransferNet, self).__init__()
+        super(LayeredAlexNet, self).__init__()
         self.features = alexnet.features
         self.layers = layer_param
         self.layer_sequence = []
@@ -197,7 +197,7 @@ class MinimalNet(nn.Module):
         return x
 
 
-nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet, "layeredresnet": LayeredResNet, "layeredalexnet": LayerdAlexNet}
+nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet, "layeredresnet": LayeredResNet, "layeredalexnet": LayeredAlexNet}
 
 
 def get_net(net_name, num_classes,layer_param):
