@@ -14,6 +14,8 @@ import torch
 import math
 import warnings
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 from PIL import Image
