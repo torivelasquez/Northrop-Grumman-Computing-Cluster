@@ -13,6 +13,7 @@
 import torch
 import math
 import warnings
+import os.path
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -131,7 +132,10 @@ def roc_curve(score, labels, classes):
         plt.xlabel('FPR (1 - Specificity)')
         plt.ylabel('TPR (Sensitivity)')
         plt.grid(True)
-        plt.savefig(classes[i]+'.png')
+        j = 0
+        while os.path.exists(classes[i] + "%s.png" %j):
+            j += 1
+        plt.savefig(classes[i] + "%s.png" %j)
 
 
 def mcc_score(binary_matrix):
