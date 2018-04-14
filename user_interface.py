@@ -70,8 +70,9 @@ def test_macro(net_t, params_t):
 
                 class_acc_list = [s + " Accuracy" for s in classes]
                 class_auc_list = [s + " AUC Score" for s in classes]
+                class_ci_list = [s + " 95% CI" for s in classes]
                 class_stat_indicies = [' '.join(s) for s in itertools.product(classes, list(class_stats.index))]
-                csv_header = csv_header + class_acc_list + class_auc_list + keys[1:] + class_stat_indicies + ["Confusion Matrix", '\n']
+                csv_header = csv_header + class_acc_list + class_auc_list + class_ci_list + keys[1:] + class_stat_indicies + ["Confusion Matrix", '\n']
                 writer.writerow(csv_header)
 
             output = []
@@ -85,7 +86,7 @@ def test_macro(net_t, params_t):
 
             # Add test results and metrics to output
             output.extend((str(acc), str(mauc)))
-            output += list(map(str, acclist)) + list(map(str, auc_values))
+            output += list(map(str, acclist)) + list(map(str, auc_values)) + list(map(str, confidence_interval))
             output += values[1:]
             output += [str(i) for sub in class_stats.values.tolist() for i in sub]
             output += confusion_matrix.tolist()
