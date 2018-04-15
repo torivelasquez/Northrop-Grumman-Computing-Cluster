@@ -179,8 +179,9 @@ class Parameters:
         else:
             print("settings file not found")
 
-class TempParams:
+class TempParams(Parameters):
     def __init__(self, input):
+        super().__init__()
         self.net_type = [input[0]]
         self.train_data_loc = [input[1]]
         self.test_data_loc = [input[2]]
