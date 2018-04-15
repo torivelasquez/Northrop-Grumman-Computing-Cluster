@@ -49,7 +49,8 @@ def test_macro(net_t, params_t):
         auc_values = auc_metric(score, labels, classes)
         mauc = MAUCscore(score, labels, classes)
         confidence_interval = auc_confidence_interval(score, labels, classes)
-        roc_curve(score, labels, classes)
+        if params_t.record[0] == 1:
+            roc_curve(score, labels, classes, params_t.plots_loc[0])
         overall_stats = list(statistics['overall'].items())
         overall_stats = [tup for tup in overall_stats if tup[1] != "ToDo"]
         keys, values = map(list, zip(*overall_stats))
