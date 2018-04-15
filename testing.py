@@ -122,7 +122,6 @@ def multi_class_labels_to_binary(labels,pos_class):
 
 def roc_curve(score, labels, classes, path):
     for i in range(len(classes)):
-        print(score)
         iscore = score[:, i] # probabilities of the positive class
         fpr, tpr, _ = metrics.roc_curve(labels, iscore, i)
         plt.figure()

@@ -55,7 +55,6 @@ def test_macro(net_t, params_t):
         overall_stats = [tup for tup in overall_stats if tup[1] != "ToDo"]
         keys, values = map(list, zip(*overall_stats))
         class_stats = statistics['class']
-        print(params_t.record[0])
 
         if params_t.record[0]:
             file_exists = os.path.isfile(params_t.record_location[0])
