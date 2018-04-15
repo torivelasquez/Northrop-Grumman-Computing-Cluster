@@ -44,7 +44,7 @@ class Parameters:
                         "record_location": self.set_record_location}
 
     def list(self):
-        return [self.net_type, self.train_data_loc, self.test_data_loc, self.images_loc, self.save_loc,
+        return [self.net_type, self.train_data_loc, self.test_data_loc, self.images_loc, self.plots_loc, self.save_loc,
                 self.load_loc, self.epochs, self.layers, self.momentum, self.learning_rate, self.criterion,
                 self.optimizer, self.train_transform, self.test_transform, self.grayscale, self.record,
                 self.record_location]
