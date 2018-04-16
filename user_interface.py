@@ -51,7 +51,8 @@ def test_macro(net_t, params_t):
         confidence_intervals = auc_confidence_interval(score, labels, classes)
         confidence_intervals = [[str(s) for s in sub] for sub in confidence_intervals]
         confidence_intervals = [':'.join(sub) for sub in confidence_intervals]
-        # roc_curve(score, labels, classes)
+        if params_t.record[0] == 1:
+            roc_curve(score, labels, classes, params_t.plots_loc[0])
         overall_stats = list(statistics['overall'].items())
         overall_stats = [tup for tup in overall_stats if tup[1] != "ToDo"]
         keys, values = map(list, zip(*overall_stats))
@@ -67,10 +68,11 @@ def test_macro(net_t, params_t):
 
             if not file_exists:
                 csv_header = ["Timestamp", "Net Type", "Train Data Location",
-                              "Test Data Location", "Images Location", "Save Location",
-                              "Load Location", "Epochs", "Layers", "Momentum", "Learning Rate",
-                              "Criterion", "Optimizer", "Train Transform", "Test Transform",
-                              "Grayscale", "Overall Accuracy", "MAUC Score", "Classes",
+                              "Test Data Location", "Images Location", "Plots Location",
+                              "Save Location", "Load Location", "Epochs", "Layers",
+                              "Momentum", "Learning Rate", "Criterion", "Optimizer",
+                              "Train Transform", "Test Transform", "Grayscale",
+                              "Overall Accuracy", "MAUC Score", "Classes",
                               "Class Accuracies", "Class AUC Scores", "Class 95% CIs"]
 
                 csv_header += keys[2:] + list(class_stats.index) + ["Confusion Matrix", '\n']

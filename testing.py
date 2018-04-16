@@ -15,6 +15,8 @@ import math
 import warnings
 import os.path
 import numpy as np
+import calendar
+import time
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -118,9 +120,8 @@ def multi_class_labels_to_binary(labels,pos_class):
     return binarylabels
 
 
-def roc_curve(score, labels, classes):
+def roc_curve(score, labels, classes, path):
     for i in range(len(classes)):
-        print(score)
         iscore = score[:, i] # probabilities of the positive class
         fpr, tpr, _ = metrics.roc_curve(labels, iscore, i)
         plt.figure()
@@ -132,10 +133,10 @@ def roc_curve(score, labels, classes):
         plt.xlabel('FPR (1 - Specificity)')
         plt.ylabel('TPR (Sensitivity)')
         plt.grid(True)
-        j = 0
-        while os.path.exists(classes[i] + "%s.png" %j):
-            j += 1
-        plt.savefig(classes[i] + "%s.png" %j)
+        if not os.path.isdir(path):
+            os.mkdir(path, 0o755)
+        tstamp = calendar.timegm(time.gmtime())
+        plt.savefig(path + classes[i] + "%s.png" % tstamp)
 
 
 def mcc_score(binary_matrix):

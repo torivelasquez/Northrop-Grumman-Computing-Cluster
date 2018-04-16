@@ -9,6 +9,7 @@ class Parameters:
         self.train_data_loc = ["parser/carsetmini.csv"]
         self.test_data_loc = ["parser/carsetmini.csv"]
         self.images_loc = ["images/"]
+        self.plots_loc = ["plots/"]
         self.save_loc = ["classifier.pt"]
         self.load_loc = ["classifier.pt"]
         self.epochs = [1]
@@ -27,6 +28,7 @@ class Parameters:
                         "train_data_loc": self.set_train_data_loc,
                         "test_data_loc": self.set_test_data_loc,
                         "images_loc": self.set_images_loc,
+                        "plots_loc" : self.set_plots_loc,
                         "save_loc": self.set_save_loc,
                         "load_loc": self.set_load_loc,
                         "epochs": self.set_epochs,
@@ -42,7 +44,7 @@ class Parameters:
                         "record_location": self.set_record_location}
 
     def list(self):
-        return [self.net_type, self.train_data_loc, self.test_data_loc, self.images_loc, self.save_loc,
+        return [self.net_type, self.train_data_loc, self.test_data_loc, self.images_loc, self.plots_loc, self.save_loc,
                 self.load_loc, self.epochs, self.layers, self.momentum, self.learning_rate, self.criterion,
                 self.optimizer, self.train_transform, self.test_transform, self.grayscale, self.record,
                 self.record_location]
@@ -64,6 +66,9 @@ class Parameters:
 
     def set_images_loc(self, new_variable):
         self.images_loc = new_variable
+
+    def set_plots_loc(self, new_variable):
+        self.plots_loc = new_variable
 
     def set_save_loc(self, new_variable):
         self.save_loc = new_variable
@@ -132,6 +137,9 @@ class Parameters:
     def get_images_loc(self):
         return self.images_loc
 
+    def get_plots_loc(self):
+        return self.plots_loc
+
     def get_save_loc(self):
         return self.save_loc
 
@@ -186,16 +194,17 @@ class TempParams(Parameters):
         self.train_data_loc = [input[1]]
         self.test_data_loc = [input[2]]
         self.images_loc = [input[3]]
-        self.save_loc = [input[4]]
-        self.load_loc = [input[5]]
-        self.epochs = [input[6]]
-        self.layers = [input[7]]
-        self.momentum = [input[8]]
-        self.learning_rate = [input[9]]
-        self.criterion = [input[10]]
-        self.optimizer = [input[11]]
-        self.train_transform = [input[12]]
-        self.test_transform = [input[13]]
-        self.grayscale = [input[14]]
-        self.record = [input[15]]
-        self.record_location = [input[16]]
+        self.plots_loc = [input[4]]
+        self.save_loc = [input[5]]
+        self.load_loc = [input[6]]
+        self.epochs = [input[7]]
+        self.layers = [input[8]]
+        self.momentum = [input[9]]
+        self.learning_rate = [input[10]]
+        self.criterion = [input[11]]
+        self.optimizer = [input[12]]
+        self.train_transform = [input[13]]
+        self.test_transform = [input[14]]
+        self.grayscale = [input[15]]
+        self.record = [input[16]]
+        self.record_location = [input[17]]
