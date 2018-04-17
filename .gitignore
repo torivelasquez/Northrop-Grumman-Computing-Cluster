@@ -1,6 +1,7 @@
 .cache/
 .idea/
 images/
+plots/
 cmtest.py
 testresults/
 __pycache__/
