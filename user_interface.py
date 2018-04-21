@@ -63,6 +63,9 @@ def test_macro(net_t, params_t):
 
         if params_t.record[0]:
             file_exists = os.path.isfile(params_t.record_location[0])
+            dir_path = os.path.dirname(params_t.record_location[0])
+            if dir_path != '':
+                os.makedirs(os.path.dirname(params_t.record_location[0]), exist_ok=True)
             result_file = open(params_t.record_location[0], 'a')
             writer = csv.writer(result_file, delimiter=',')
 
