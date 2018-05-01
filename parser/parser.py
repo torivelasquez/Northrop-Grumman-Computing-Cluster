@@ -14,17 +14,17 @@ def get_data(transform, img_path, csv_path, grayscale):
 
 class CarDataset(Dataset):
 
-    def __init__(self, csv_file, root_dir, transform=None, grayscale = False):
+    def __init__(self, csv_file, root_dir, transform=None, grayscale=False):
         self.grayscale = grayscale
         self.car_list = []
         self.classes = []
         with open(csv_file) as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             for row in reader:
-                if not row[1] in self.classes:
-                    self.classes.append(row[1])
-                self.car_list.append(car.Car(self.classes.index(row[1]), row[2],
-                                             (int(row[3]), int(row[4]), int(row[5]), int(row[6]))))
+                if not row[0] in self.classes:
+                    self.classes.append(row[0])
+                self.car_list.append(car.Car(self.classes.index(row[0]), row[1],
+                                             (int(row[2]), int(row[3]), int(row[4]), int(row[5]))))
         self.root_dir = root_dir
         self.transform = transform
 
@@ -43,7 +43,8 @@ class CarDataset(Dataset):
         style = self.car_list[index]["style"]
         if self.transform:
             image = self.transform(image)
-        sample = (image, int(style)) # needed to covert '1' to 1
+        sample = (image, int(style))
+
         return sample
 
     def get_classes(self):
