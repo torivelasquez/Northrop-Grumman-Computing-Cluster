@@ -21,7 +21,9 @@ def len_test(cmd_split, num):
     print(cmd_split[0], " expects ", num, " arguments ", len(cmd_split), " given. Use <help> for help")
     return False
 
-
+"""
+train macro performs the neccesary steps to train a net given a paramaters object params_t. it then returns the trained net.
+"""
 def train_macro(params_t):
     try:
         transform = transformations.get_transform(params_t.train_transform[0])
@@ -38,7 +40,10 @@ def train_macro(params_t):
     except Exception as e:
         print("Error: ", e)
 
-
+"""
+test_macro performs the neccesary steps to test a net net_t given a paramaters object params_t.
+It outputs the results of the test to the terminal, and records the results as specified in the params _t object
+"""
 def test_macro(net_t, params_t):
     try:
         transform = transformations.get_transform(params_t.test_transform[0])
@@ -114,7 +119,11 @@ def test_macro(net_t, params_t):
     except Exception as e:
         print("Error: ", e)
 
-
+"""
+The main user interface accepts a command from the user and matched the command to the first word in the input.
+It then checks if the input command has the correct number of paramaters specified and aborts the command execution
+if it does not.
+"""
 params = runtime_parameters.Parameters()
 if len(sys.argv) == 2:
     params.set("file", sys.argv[1])
