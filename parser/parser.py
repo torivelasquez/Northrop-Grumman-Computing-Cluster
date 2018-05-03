@@ -7,14 +7,30 @@ import torch
 
 
 def get_data(transform, img_path, csv_path, grayscale):
+    """
+    :param transform: A transformation function.
+    :param img_path: The actual or relative image directory path.
+    :param csv_path: The actual or relative CSV file path.
+    :param grayscale: Boolean value whether to convert 3 channel RGB format.
+    :return: Dataset loader for the CarDataset class.
+    """
     car_dataset = CarDataset(csv_path, img_path, transform, grayscale)
     return torch.utils.data.DataLoader(car_dataset, batch_size=4, shuffle=True, num_workers=2), \
         car_dataset.get_classes()
 
 
 class CarDataset(Dataset):
+    """
+    An inherited Pytorch Dataset class. Stores images and specs into a database.
+    """
 
     def __init__(self, csv_file, root_dir, transform=None, grayscale=False):
+        """
+        :param csv_file: The actual or relative CSV file path.
+        :param root_dir: The actual or relative image directory path.
+        :param transform: A transformation function.
+        :param grayscale: Boolean value whether to convert to 3 channel RGB format.
+        """
         self.grayscale = grayscale
         self.car_list = []
         self.classes = []
@@ -29,9 +45,16 @@ class CarDataset(Dataset):
         self.transform = transform
 
     def __len__(self):
+        """
+        :return: The number of dataset entries.
+        """
         return len(self.car_list)
 
     def __getitem__(self, index):
+        """
+        :param index: A numerical number of the desired dataset entry.
+        :return: A transformed image and numerical class type of the corresponding image.
+        """
         img_name = os.path.join(self.root_dir, self.car_list[index]["img_name"])
         bbox = self.car_list[index]["bbox"]
         og_image = Image.open(img_name)
@@ -48,4 +71,7 @@ class CarDataset(Dataset):
         return sample
 
     def get_classes(self):
+        """
+        :return: All available classes as a list.
+        """
         return self.classes
