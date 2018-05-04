@@ -1,7 +1,7 @@
 # Convnet algorithms
 # nets:
 #   BaseNet: pytorch tutorials convnet
-#   Net : experiment of making a convnet which
+#   Net : experiment of making a convnet which tests change in activation function
 #   Graynet: same structure
 #   TransferNet: takes an Alexnet base from the ImageNet contest and performs fine tunning for the specific problem
 #   ResNet: Takes a pretrained Resnet18 base and performs fine tuning after adding additional layers
