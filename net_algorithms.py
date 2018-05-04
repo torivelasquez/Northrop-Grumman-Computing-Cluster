@@ -1,18 +1,27 @@
 # Convnet algorithms
-# contains:
-#   BaseNet: pytroch tutorials convnet
-#   Net : poor experiment of making a convnet
+# nets:
+#   BaseNet: pytorch tutorials convnet
+#   Net : experiment of making a convnet which
+#   Graynet: same structure
 #   TransferNet: takes an Alexnet base from the ImageNet contest and performs fine tunning for the specific problem
 #   ResNet: Takes a pretrained Resnet18 base and performs fine tuning after adding additional layers
-#   LayeredResNet: same as Resnet but has abstracted the additional layers
-#   optimizer(): performs stochastic gradient decent along the vector space of images
+#   LayeredResNet: same as Resnet but has abstracted the additional layers which can be Linear, Relu, or dropout from config
+#   LayeredAlexNet: same as Alexnet but has abstracted additional layers which can be Linear, Relu, or dropout from config
 #
-#   function descriptions:
-#       nn.conv2d performs
-#       nn. MaxPool(a,b) takes the maximum out of a*b segment of matrix
-#       nn.relu is an activator function max(0,x) where x is the tensor.
-#       nnleaky_relu is an activator function
-#       nn.Linear(a,b) linear tensor transformation from a dimension to b dimension
+# criterions
+#       crossentropy:  mesures the differeance of the probability of classifier and true  label
+#
+#   optimizers
+#      -SGD: Stochastic gradient decent is the definition of how the nodes change with the process of training
+#
+#   pytorch function descriptions:
+#       nn.conv2d performs an image processing convolution which takes the information of neighboring pixels
+#       nn. MaxPool(a,b) takes the maximum out of a by b pixels
+#       nn.relu is an activator function max(0,x) where x is the input.
+#       nnleaky_relu is an activator function max(0,x)+negative_slope*min(0,x) where x is the input
+#       nn.Linear(a,b): fully connceted layer which transforms the input by a linear matrix Ax=b where A is a (n,m) matrix
+#       nn.Dropout is a regularization layer which sets some weights randomly to zero under bernoulli distribution
+#
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -102,7 +111,7 @@ class ResNet(nn.Module):
 
     def forward(self, x):
         f = self.features(x)
-        f = f.view(f.size(0), 512 * 7 * 7) # the size of tensor is 512 * 7 * 7
+        f = f.view(f.size(0), 512 * 7 * 7) # the size of tensor from the pre-trained network
         y = self.classifier(f)
         return y
 
@@ -113,7 +122,7 @@ class LayeredResNet(nn.Module):
         self.features = nn.Sequential(*list(resnet.children())[:-1])
         self.layers = layer_param
         self.layer_sequence = []
-        previous_width = self.make_layers(layer_param, 512*7*7)
+        previous_width = self.make_layers(layer_param, 512*7*7)    # the size of tensor from the pre-trained net
         self.layer_sequence += [nn.Linear(previous_width, output_size)]
         self.classifier = nn.Sequential(
             *self.layer_sequence
@@ -121,7 +130,7 @@ class LayeredResNet(nn.Module):
 
     def forward(self, x):
         f = self.features(x)
-        f = f.view(f.size(0), 512 * 7 * 7) # the size of tensor is 512 * 7 * 7
+        f = f.view(f.size(0), 512 * 7 * 7) # the size of tensor from the pre-trained net
         y = self.classifier(f)
         return y
 
