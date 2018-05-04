@@ -6,6 +6,14 @@ import numpy as np
 from torch.autograd import Variable
 from timeit import default_timer as timer
 
+"""
+train() trains the net and returns  how long to took to train.
+trainloader: the loader for the training images
+optimizer: the optimizer algorithm
+criterion: the loss function
+epohcs: how many epochs it trains for
+"""
+
 
 def train(net, trainloader, optimizer, criterion, epochs):
     start = timer()

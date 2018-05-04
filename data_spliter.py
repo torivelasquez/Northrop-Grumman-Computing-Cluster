@@ -1,6 +1,14 @@
 import random
 import math
 
+"""
+data_splitter() splits the lines of input files into multiple output files, distributing each class uniformly.
+in_file_name: the address of the file to read in
+out_file_names: a list of file locations to output to
+fractions: a list of floats to specify what fraction of the lines should go to each file.
+return: 0 on success, 1 on detected error
+"""
+
 
 def data_spliter(in_file_name, out_file_names, fractions):
     if not math.isclose(sum(fractions), 1, rel_tol=1e-5):

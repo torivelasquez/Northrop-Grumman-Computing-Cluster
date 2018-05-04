@@ -199,7 +199,9 @@ class MinimalNet(nn.Module):
 
 nets = {"transfer": TransferNet, "simple": Net, "resnet":ResNet, "grayscale": GrayNet, "layeredresnet": LayeredResNet, "layeredalexnet": LayeredAlexNet}
 
-
+"""
+get_net() retrieves a net structure based on the string names as defined in nets.
+"""
 def get_net(net_name, num_classes,layer_param):
     if net_name in nets:
         return nets[net_name](num_classes,layer_param)
@@ -213,7 +215,9 @@ def cross_entropy():
 
 criterion = {"crossentropy": cross_entropy}
 
-
+"""
+get_criterion() retrieves a loss function based on the string names as defined in criterion.
+"""
 def get_criterion(criterion_name):
     if criterion_name in criterion:
         return criterion[criterion_name]()
@@ -228,6 +232,9 @@ def sgd(net,lrate,moment):
 optimizers = {"sgd": sgd}
 
 
+"""
+get_optimizer() retrieves an optimizer based on the string names as defined in optimizers.
+"""
 def get_optimizer(optimizer_name, net,lrate,moment):
     if optimizer_name in optimizers:
         return optimizers[optimizer_name](net,lrate,moment)
