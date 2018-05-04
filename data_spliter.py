@@ -10,7 +10,7 @@ def data_spliter(in_file_name, out_file_names, fractions):
     with open(in_file_name, 'r') as in_file:
         for line in in_file:
             num_in_lines += 1
-            line_class = line.split(',')[1]
+            line_class = line.split(',')[0]
             if not line_class in class_counts:
                  class_counts[line_class] = 0
             class_counts[line_class] += 1
@@ -27,7 +27,7 @@ def data_spliter(in_file_name, out_file_names, fractions):
         for line in in_file:
             num = random.random()   # generates a pseudo-random number between 0 and 1
             file_classifier_bound = 0
-            line_class = line.split(',')[1]
+            line_class = line.split(',')[0]
             for i in range(len(out_files)):
                 file_classifier_bound += fractions[i]
                 if num <= file_classifier_bound:

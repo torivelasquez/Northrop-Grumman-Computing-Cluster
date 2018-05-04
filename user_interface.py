@@ -21,7 +21,9 @@ def len_test(cmd_split, num):
     print(cmd_split[0], " expects ", num, " arguments ", len(cmd_split), " given. Use <help> for help")
     return False
 
-
+"""
+train macro performs the neccesary steps to train a net given a paramaters object params_t. it then returns the trained net.
+"""
 def train_macro(params_t):
     try:
         transform = transformations.get_transform(params_t.train_transform[0])
@@ -38,7 +40,10 @@ def train_macro(params_t):
     except Exception as e:
         print("Error: ", e)
 
-
+"""
+test_macro performs the neccesary steps to test a net net_t given a paramaters object params_t.
+It outputs the results of the test to the terminal, and records the results as specified in the params _t object
+"""
 def test_macro(net_t, params_t):
     try:
         transform = transformations.get_transform(params_t.test_transform[0])
@@ -48,31 +53,37 @@ def test_macro(net_t, params_t):
         acclist = get_accuracy_by_class(confusion_matrix, classes)
         auc_values = auc_metric(score, labels, classes)
         mauc = MAUCscore(score, labels, classes)
-        confidence_interval = auc_confidence_interval(score, labels, classes)
-        if params_t.record[0] == 1:
-            roc_curve(score, labels, classes, params_t.plots_loc[0])
+        confidence_intervals = auc_confidence_interval(score, labels, classes)
+        confidence_intervals = [[str(s) for s in sub] for sub in confidence_intervals]
+        confidence_intervals = [':'.join(sub) for sub in confidence_intervals]
         overall_stats = list(statistics['overall'].items())
         overall_stats = [tup for tup in overall_stats if tup[1] != "ToDo"]
         keys, values = map(list, zip(*overall_stats))
         class_stats = statistics['class']
+        class_stats_values = class_stats.values.tolist()
+        class_stats_values = [[str(s) for s in sub] for sub in class_stats_values]
+        class_stats_values = [';'.join(s) for s in class_stats_values]
 
         if params_t.record[0]:
+            roc_curve(score, labels, classes, params_t.plots_loc[0])
+
             file_exists = os.path.isfile(params_t.record_location[0])
+            dir_path = os.path.dirname(params_t.record_location[0])
+            if dir_path != '':
+                os.makedirs(os.path.dirname(params_t.record_location[0]), exist_ok=True)
             result_file = open(params_t.record_location[0], 'a')
             writer = csv.writer(result_file, delimiter=',')
 
             if not file_exists:
                 csv_header = ["Timestamp", "Net Type", "Train Data Location",
-                              "Test Data Location", "Images Location", "Save Location",
-                              "Load Location", "Epochs", "Layers", "Momentum", "Learning Rate",
-                              "Criterion", "Optimizer", "Train Transform", "Test Transform",
-                              "Grayscale", "Overall Accuracy", "MAUC Score"]
+                              "Test Data Location", "Images Location", "Plots Location",
+                              "Save Location", "Load Location", "Epochs", "Layers",
+                              "Momentum", "Learning Rate", "Criterion", "Optimizer",
+                              "Train Transform", "Test Transform", "Grayscale",
+                              "Overall Accuracy", "MAUC Score", "Classes",
+                              "Class Accuracies", "Class AUC Scores", "Class 95% CIs"]
 
-                class_acc_list = [s + " Accuracy" for s in classes]
-                class_auc_list = [s + " AUC Score" for s in classes]
-                class_ci_list = [s + " 95% CI" for s in classes]
-                class_stat_indicies = [' '.join(s) for s in itertools.product(classes, list(class_stats.index))]
-                csv_header = csv_header + class_acc_list + class_auc_list + class_ci_list + keys[1:] + class_stat_indicies + ["Confusion Matrix", '\n']
+                csv_header += keys[2:] + list(class_stats.index) + ["Confusion Matrix", '\n']
                 writer.writerow(csv_header)
 
             output = []
@@ -82,14 +93,25 @@ def test_macro(net_t, params_t):
             output.append(runtime)
 
             # Add net parameters to outputs
-            output += [i[0] if len(i) == 1 else i for i in params_t.list()][:-2]
+            param_keys = list(params_t.set_map.keys())[1:]
+            layers_idx = param_keys.index("layers")
+            out_params = [i[0] if len(i) == 1 else i for i in params_t.list()][:-2]
+            out_params[layers_idx] = list(map(str, out_params[layers_idx]))
+            out_params[layers_idx] = ':'.join(out_params[layers_idx])
+            output += out_params
 
             # Add test results and metrics to output
             output.extend((str(acc), str(mauc)))
-            output += list(map(str, acclist)) + list(map(str, auc_values)) + list(map(str, confidence_interval))
-            output += values[1:]
-            output += [str(i) for sub in class_stats.values.tolist() for i in sub]
-            output += confusion_matrix.tolist()
+            output += [';'.join(classes)]
+            output += [';'.join(list(map(str, acclist)))]
+            output += [';'.join(list(map(str, auc_values)))]
+            output += [';'.join(list(map(str, confidence_intervals)))]
+            output += values[2:]
+            output += class_stats_values
+            cm_list = confusion_matrix.tolist()
+            cm_list = [[str(s) for s in sub] for sub in cm_list]
+            cm_list = [';'.join([':'.join(s) for s in cm_list])]
+            output += cm_list
             output.append('\n')
 
             writer.writerow(output)
@@ -97,7 +119,11 @@ def test_macro(net_t, params_t):
     except Exception as e:
         print("Error: ", e)
 
-
+"""
+The main user interface accepts a command from the user and matched the command to the first word in the input.
+It then checks if the input command has the correct number of paramaters specified and aborts the command execution
+if it does not.
+"""
 params = runtime_parameters.Parameters()
 if len(sys.argv) == 2:
     params.set("file", sys.argv[1])

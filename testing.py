@@ -121,6 +121,7 @@ def multi_class_labels_to_binary(labels,pos_class):
 
 
 def roc_curve(score, labels, classes, path):
+    tstamp = calendar.timegm(time.gmtime())
     for i in range(len(classes)):
         iscore = score[:, i] # probabilities of the positive class
         fpr, tpr, _ = metrics.roc_curve(labels, iscore, i)
@@ -135,8 +136,8 @@ def roc_curve(score, labels, classes, path):
         plt.grid(True)
         if not os.path.isdir(path):
             os.mkdir(path, 0o755)
-        tstamp = calendar.timegm(time.gmtime())
         plt.savefig(path + classes[i] + "%s.png" % tstamp)
+        plt.close()
 
 
 def mcc_score(binary_matrix):
