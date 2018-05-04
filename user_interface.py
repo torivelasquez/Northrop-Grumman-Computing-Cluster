@@ -21,7 +21,9 @@ def len_test(cmd_split, num):
     print(cmd_split[0], " expects ", num, " arguments ", len(cmd_split), " given. Use <help> for help")
     return False
 
-
+"""
+train macro performs the neccesary steps to train a net given a paramaters object params_t. it then returns the trained net.
+"""
 def train_macro(params_t):
     try:
         transform = transformations.get_transform(params_t.train_transform[0])
@@ -38,7 +40,10 @@ def train_macro(params_t):
     except Exception as e:
         print("Error: ", e)
 
-
+"""
+test_macro performs the neccesary steps to test a net net_t given a paramaters object params_t.
+It outputs the results of the test to the terminal, and records the results as specified in the params _t object
+"""
 def test_macro(net_t, params_t):
     try:
         transform = transformations.get_transform(params_t.test_transform[0])
@@ -51,8 +56,6 @@ def test_macro(net_t, params_t):
         confidence_intervals = auc_confidence_interval(score, labels, classes)
         confidence_intervals = [[str(s) for s in sub] for sub in confidence_intervals]
         confidence_intervals = [':'.join(sub) for sub in confidence_intervals]
-        if params_t.record[0] == 1:
-            roc_curve(score, labels, classes, params_t.plots_loc[0])
         overall_stats = list(statistics['overall'].items())
         overall_stats = [tup for tup in overall_stats if tup[1] != "ToDo"]
         keys, values = map(list, zip(*overall_stats))
@@ -62,6 +65,8 @@ def test_macro(net_t, params_t):
         class_stats_values = [';'.join(s) for s in class_stats_values]
 
         if params_t.record[0]:
+            roc_curve(score, labels, classes, params_t.plots_loc[0])
+
             file_exists = os.path.isfile(params_t.record_location[0])
             dir_path = os.path.dirname(params_t.record_location[0])
             if dir_path != '':
@@ -114,7 +119,11 @@ def test_macro(net_t, params_t):
     except Exception as e:
         print("Error: ", e)
 
-
+"""
+The main user interface accepts a command from the user and matched the command to the first word in the input.
+It then checks if the input command has the correct number of paramaters specified and aborts the command execution
+if it does not.
+"""
 params = runtime_parameters.Parameters()
 if len(sys.argv) == 2:
     params.set("file", sys.argv[1])

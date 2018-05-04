@@ -2,6 +2,10 @@
 
 import os.path
 
+"""
+this class is used to store paramaters the software needs to decide how to execute. 
+"""
+
 
 class Parameters:
     def __init__(self):
@@ -23,6 +27,7 @@ class Parameters:
         self.grayscale = [False]
         self.record = [False]
         self.record_location = ["results.csv"]
+        # set_map is a mapping of the name of a parameter that parameter corresponding setter method
         self.set_map = {"file": self.read_file,
                         "net_type": self.set_net_type,
                         "train_data_loc": self.set_train_data_loc,
@@ -42,13 +47,19 @@ class Parameters:
                         "grayscale": self.set_grayscale,
                         "record": self.set_record,
                         "record_location": self.set_record_location}
-
+    """
+    The list() function returns a list containing all the parameters tracked by the parameters object
+    """
     def list(self):
         return [self.net_type, self.train_data_loc, self.test_data_loc, self.images_loc, self.plots_loc, self.save_loc,
                 self.load_loc, self.epochs, self.layers, self.momentum, self.learning_rate, self.criterion,
                 self.optimizer, self.train_transform, self.test_transform, self.grayscale, self.record,
                 self.record_location]
 
+    """
+    set() takes a string parameter name and a new variable value and uses the set map to pass the new value to the
+     appropriate setter method
+    """
     def set(self, param, new_variable):
         if param in self.set_map:
             self.set_map[param](new_variable.split())
@@ -170,6 +181,9 @@ class Parameters:
     def get_test_transform(self):
         return self.test_transform
 
+    """
+    read_file parsers a file for parameters and values and passes them to the set method.
+    """
     def read_file(self, file_name):
         file_name = file_name[0]
         if os.path.isfile(file_name):
@@ -186,6 +200,13 @@ class Parameters:
                             print("not formatted correctly: ", line)
         else:
             print("settings file not found")
+
+
+"""
+temp parameters holds the same parameter structure as a paramaters object, but can be instantiated by passing it a list
+of the parameters.
+"""
+
 
 class TempParams(Parameters):
     def __init__(self, input):
