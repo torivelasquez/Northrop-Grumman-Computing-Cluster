@@ -2,7 +2,7 @@
 # nets:
 #   BaseNet: pytorch tutorials convnet
 #   Net : experiment of making a convnet which tests change in activation function
-#   Graynet: same structure
+#   Graynet: same structure as Basenet but takes grayscale images instead of RGB colored images
 #   TransferNet: takes an Alexnet base from the ImageNet contest and performs fine tunning for the specific problem
 #   ResNet: Takes a pretrained Resnet18 base and performs fine tuning after adding additional layers
 #   LayeredResNet: same as Resnet but has abstracted the additional layers which can be Linear, Relu, or dropout from config
