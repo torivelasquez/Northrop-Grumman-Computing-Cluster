@@ -9,7 +9,7 @@
 #   LayeredAlexNet: same as Alexnet but has abstracted additional layers which can be Linear, Relu, or dropout from config
 #
 # criterions
-#       crossentropy:  mesures the differeance of the probability of classifier and true  label
+#       crossentropy:  measures the difference of the probability of classifier and true  label
 #
 #   optimizers
 #      -SGD: Stochastic gradient decent is the definition of how the nodes change with the process of training
@@ -18,7 +18,7 @@
 #       nn.conv2d performs an image processing convolution which takes the information of neighboring pixels
 #       nn. MaxPool(a,b) takes the maximum out of a by b pixels
 #       nn.relu is an activator function max(0,x) where x is the input.
-#       nnleaky_relu is an activator function max(0,x)+negative_slope*min(0,x) where x is the input
+#       nnleaky_relu: activator function max(0,x)+negative_slope*min(0,x) where x is the input
 #       nn.Linear(a,b): fully connceted layer which transforms the input by a linear matrix Ax=b where A is a (n,m) matrix
 #       nn.Dropout is a regularization layer which sets some weights randomly to zero under bernoulli distribution
 #

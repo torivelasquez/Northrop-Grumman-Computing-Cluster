@@ -3,12 +3,17 @@
 # 	getaccuracy(): compares prediction to the actual label in test data set
 # 	getaccuracybyclass(): compares prediction to the actual label for every class
 #   compute_confusion_matrix(): creates a confusion matrix for classification and s
-#       -returns
-#       -confusion matrix
-#       -probabilities of each class being classified
-#       -true labels of classification
+#       -returns confusion matrix,probabilities of each class being classified,true labels of classification
 #   multiclass_simplify_to_binary(): for a specific class simplifies the matrix to a two by two matrix based on one vs all manner.
+#   multi_class_labels_to_binary(): set true labels to positive or negative class in one vs all approach
 #   computeMAUCScore(): takes each pairwise AUC and takes the average to make a MAUC metric
+#   roccurve(): plots the roc curve of one vs all system
+#   mcc_score(): computes the Matthew co-relation coefficient from the confusion matrix
+#   get_mcc_by_class(): computes the Matthew co-relation coefficent from each one vs all class comparison
+#   auc_metric(): computes the area under the curve of the roc curve
+#   auc_confidence_interval(): computes the confidence interval of auc score by bootstraping which is making an
+#       approximate probability distribution by multi sampling the data.
+#   auc_pair(): computes the auc score of a pair of classes.
 
 import torch
 import math

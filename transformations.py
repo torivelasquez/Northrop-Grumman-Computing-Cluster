@@ -27,7 +27,9 @@ def transform2():
 
 trans = {"main": transform2, "old": transformation}
 
-
+"""
+get_transform() retrieves a transformation based on the string names as defined in trans.
+"""
 def get_transform(transform_name):
     if transform_name in trans:
         return trans[transform_name]()
