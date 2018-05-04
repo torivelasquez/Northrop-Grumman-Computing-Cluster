@@ -3,6 +3,12 @@ import math
 
 
 def data_spliter(in_file_name, out_file_names, fractions):
+    """
+    :param in_file_name: CSV file to be split.
+    :param out_file_names: CSV files to save split dataset.
+    :param fractions: The fraction of dataset each out file will receive.
+    :return: 1 if fractions don't sum to 1, or 0 otherwise.
+    """
     if not math.isclose(sum(fractions), 1, rel_tol=1e-5):
         return 1
     num_in_lines = 0
